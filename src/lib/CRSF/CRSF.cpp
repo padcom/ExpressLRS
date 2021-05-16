@@ -646,7 +646,7 @@ void ICACHE_RAM_ATTR CRSF::handleUARTin()
                 {
                     if (ProcessPacket())
                     {
-                        delayMicroseconds(100);
+                        delayMicroseconds(50);
                         handleUARTout();
                     }
                 }
