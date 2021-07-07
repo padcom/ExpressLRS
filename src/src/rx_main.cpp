@@ -175,6 +175,13 @@ uint8_t RFmodeCycleMultiplier;
 bool LockRFmode = false;
 ///////////////////////////////////////
 
+// Debug vars
+uint8_t debug1 = 0;
+uint8_t debug2 = 0;
+uint8_t debug3 = 0;
+int8_t debug4 = 0;
+///////////////////////////////////////
+
 bool InBindingMode = false;
 
 void reset_into_bootloader(void);
@@ -219,12 +226,22 @@ void ICACHE_RAM_ATTR getRFlinkInfo()
 
     // BetaFlight/iNav expect positive values for -dBm (e.g. -80dBm -> sent as 80)
     crsf.LinkStatistics.uplink_RSSI_1 = -rssiDBM0;
-    crsf.LinkStatistics.uplink_RSSI_2 = -rssiDBM1;
     crsf.LinkStatistics.active_antenna = antenna;
     crsf.LinkStatistics.uplink_SNR = Radio.LastPacketSNR;
     crsf.LinkStatistics.uplink_Link_quality = uplinkLQ;
     crsf.LinkStatistics.rf_Mode = (uint8_t)RATE_4HZ - (uint8_t)ExpressLRS_currAirRate_Modparams->enum_rate;
     //Serial.println(crsf.LinkStatistics.uplink_RSSI_1);
+    #ifdef BF_DEBUG_OFF
+    crsf.LinkStatistics.uplink_RSSI_2 = -rssiDBM1;
+    crsf.LinkStatistics.downlink_RSSI = 0;
+    crsf.LinkStatistics.downlink_Link_quality = 0;
+    crsf.LinkStatistics.downlink_SNR = 0;
+    #else
+    crsf.LinkStatistics.downlink_RSSI = debug1;
+    crsf.LinkStatistics.downlink_Link_quality = debug2;
+    crsf.LinkStatistics.downlink_SNR = debug3;
+    crsf.LinkStatistics.uplink_RSSI_2 = debug4;
+    #endif
 }
 
 void SetRFLinkRate(uint8_t index) // Set speed of RF link
@@ -644,6 +661,11 @@ void GotConnection()
 
 static int8_t nonceOffset[] = {0, -1, 1};
 
+#ifdef BF_DEBUG_NONCERX_SYNC
+int8_t outOfSyncCounterPos = 0;
+int8_t outOfSyncCounterNeg = 0;
+#endif
+
 void ICACHE_RAM_ATTR ProcessRFPacket()
 {
     beginProcessing = micros();
@@ -664,6 +686,16 @@ void ICACHE_RAM_ATTR ProcessRFPacket()
             if (NonceRX / ExpressLRS_currAirRate_Modparams->FHSShopInterval == (NonceRX + nonceOffset[index]) / ExpressLRS_currAirRate_Modparams->FHSShopInterval)
             {
                 NonceRX += nonceOffset[index];
+                #ifdef BF_DEBUG_NONCERX_SYNC
+				if (index == 2)
+				{
+					outOfSyncCounterPos += 1;
+				}
+				if (index == 1)
+				{
+					outOfSyncCounterNeg += 1;
+				}
+                #endif
             }
             foundNonceIndex = index;
             #ifndef DEBUG_SUPPRESS
@@ -674,6 +706,13 @@ void ICACHE_RAM_ATTR ProcessRFPacket()
         }
     }
         
+    #ifdef BF_DEBUG_NONCERX_SYNC
+    debug1 = NonceRX;
+    debug2 = outOfSyncCounterPos;
+    debug3 = outOfSyncCounterNeg;
+    // debug4 = 0;
+    #endif
+
     #ifndef DEBUG_SUPPRESS
     if (foundNonceIndex == -1) {
         Serial.print("CRC error on RF packet: ");

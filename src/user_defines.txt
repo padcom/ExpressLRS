@@ -62,3 +62,6 @@
 
 #Comment this to disable diversity function
 #-DUSE_DIVERSITY
+
+-DBF_DEBUG_OFF
+#-DBF_DEBUG_NONCERX_SYNC
