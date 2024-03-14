@@ -2,6 +2,7 @@
 
 #include "CRSFHandset.h"
 #include "dynpower.h"
+#include "multi_uid.h"
 #include "lua.h"
 #include "msp.h"
 #include "msptypes.h"
@@ -1432,6 +1433,7 @@ void loop()
   CheckConfigChangePending();
   DynamicPower_Update(now);
   VtxPitmodeSwitchUpdate();
+  DualUIDUpdte();
 
   /* Send TLM updates to handset if connected + reporting period
    * is elapsed. This keeps handset happy dispite of the telemetry ratio */

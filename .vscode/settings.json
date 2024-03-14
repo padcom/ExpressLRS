@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "**/dist/**/*.css": "css",
+    "*.css": "postcss",
+    "chrono": "cpp",
+    "cstdint": "cpp"
+  }
+}
