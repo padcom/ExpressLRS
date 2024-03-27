@@ -1,17 +1,79 @@
+#if defined(TARGET_TX)
+
+#include <ArduinoJson.h>
+#include <StreamString.h>
+#include <SPIFFS.h>
 #include "common.h"
 #include "config.h"
 #include "OTA.h"
 #include "FHSS.h"
 #include "hwTimer.h"
+#include "multi_uid.h"
+
+proxy_options_t proxy_options;
+
+void loadMultiUIDDefaults() {
+    proxy_options.is_proxy = false;
+    proxy_options.aux = 14;
+    proxy_options.has_proxy_uid = false;
+    memset(proxy_options.proxy_uid, 0, UID_LEN);
+}
+
+void loadMultiUIDOptionsFromJSON(DynamicJsonDocument json) {
+    proxy_options.is_proxy = json["is-proxy"];
+    proxy_options.aux = json["aux"];
+    copyArray(json["proxy-uid"], proxy_options.proxy_uid, UID_LEN);
+    proxy_options.has_proxy_uid = true;
+}
+
+void loadMultiUIDOptions() {
+    DynamicJsonDocument json(1024);
+
+    File file = SPIFFS.open("/proxy.json", "r");
+    if (file && !file.isDirectory()) {
+        DeserializationError error = deserializeJson(json, file);
+        if (error) {
+            DBGLN("Error loading proxy.json: %d", error.code());
+            return;
+        }
+        loadMultiUIDOptionsFromJSON(json);
+
+        DBGLN("proxy.json loaded");
+    } else {
+        loadMultiUIDDefaults();
+
+        DBGLN("proxy.json not found - loaded defaults");
+    }
+    file.close();
+}
+
+// DynamicJsonDocument proxyOptionsToJSON() {
+//     DynamicJsonDocument json(1024);
+
+//     copyArray(proxy_options.proxy_uid, UID_LEN, json.createNestedArray("proxy-uid"));
+//     json["is-proxy"] = proxy_options.is_proxy;
+//     json["aux"] = proxy_options.aux;
+// }
+
+// void saveMultiUIDOptionsJSON(
+//     DynamicJsonDocument json
+// ) {
+//     File file = SPIFFS.open("/proxy.json", "w");
+//     serializeJson(json, file);
+//     file.close();
+
+//     DBGLN("proxy.json saved");
+// }
+
+// void saveMultiUIDOptions() {
+//     saveMultiUIDOptionsJSON(proxyOptionsToJSON());
+// }
 
 static void setupBindingFromConfig()
 {
-  if (firmwareOptions.hasUID)
-  {
+  if (firmwareOptions.hasUID) {
       memcpy(UID, firmwareOptions.uid, UID_LEN);
-  }
-  else
-  {
+  } else {
 #ifdef PLATFORM_ESP32
     esp_read_mac(UID, ESP_MAC_WIFI_STA);
 #elif PLATFORM_STM32
@@ -24,47 +86,77 @@ static void setupBindingFromConfig()
 #endif
   }
 
-  DBGLN("UID=(%d, %d, %d, %d, %d, %d)",
-    UID[0], UID[1], UID[2], UID[3], UID[4], UID[5]);
+  DBGLN("UID=(%d, %d, %d, %d, %d, %d)", UID[0], UID[1], UID[2], UID[3], UID[4], UID[5]);
 
   OtaUpdateCrcInitFromUid();
 }
 
-int dualUIDAuxState = 0;
-int isProxy = 0;
+void setProxyUID() {
+    // use UID (as in the checksum of the binding phrase) of the proxy
+    // UID[0] = 25;
+    // UID[1] = 248;
+    // UID[2] = 46;
+    // UID[3] = 154;
+    // UID[4] = 152;
+    // UID[5] = 214;
+    memcpy(UID, proxy_options.proxy_uid, UID_LEN);
+    OtaUpdateCrcInitFromUid();
+    FHSSrandomiseFHSSsequence(uidMacSeedGet());
+}
 
-void DualUIDUpdte() {
-    uint8_t currentDualUIDAuxState = CRSF_to_BIT(ChannelData[14]);
+void setFirmawareUID() {
+    // we're back to the original receiver - use the one stored in config
+    setupBindingFromConfig();
+    FHSSrandomiseFHSSsequence(uidMacSeedGet());
+}
+
+int dualUIDAuxState = 0;
+
+void DualUIDUpdate() {
+    if (!proxy_options.has_proxy_uid) return;
+
+    uint8_t currentDualUIDAuxState = CRSF_to_BIT(ChannelData[proxy_options.aux]);
 
     // If channel 14 has changed its value
     if (dualUIDAuxState != currentDualUIDAuxState) {
         dualUIDAuxState = currentDualUIDAuxState;
-        if (dualUIDAuxState) {
-            // use UID (as in the checksum of the binding phrase) of the proxy
-            // TODO: read the UID from some kind of configuration...
-            UID[0] = 25;
-            UID[1] = 248;
-            UID[2] = 46;
-            UID[3] = 154;
-            UID[4] = 152;
-            UID[5] = 214;
-            OtaUpdateCrcInitFromUid();
-            FHSSrandomiseFHSSsequence(uidMacSeedGet());
-        } else {
-            // we're back to the original receiver - use the one stored in config
-            setupBindingFromConfig();
-            FHSSrandomiseFHSSsequence(uidMacSeedGet());
-        }
-    }
 
-    // If this is the proxy transmitter and we are not transmitting over the proxy
-    // then disable sending anything over the link.
-    if (isProxy) {
-        // TODO: THIS MIGHT DISABLE MSP PACKET RETRIEVAL - NEED TO CHECK!!!
-        if (!dualUIDAuxState && hwTimer::running) {
-            hwTimer::stop();
-        } else if (dualUIDAuxState && !hwTimer::running) {
-            hwTimer::resume();
+        if (proxy_options.is_proxy) {
+            // If this is the proxy transmitter and we are not transmitting over the proxy
+            // then disable sending anything over the link.
+            if (!dualUIDAuxState && hwTimer::running) {
+                // TODO: THIS MIGHT DISABLE MSP PACKET RETRIEVAL - NEED TO CHECK!!!
+                hwTimer::stop();
+            } else if (dualUIDAuxState && !hwTimer::running) {
+                hwTimer::resume();
+            }
+        } else if (proxy_options.has_proxy_uid) {
+            // This is the actual transmitter and we need to set the current UID
+            if (dualUIDAuxState) {
+                setProxyUID();
+            } else {
+                setFirmawareUID();
+            }
         }
     }
 }
+
+// static void GetMultiUIDConfiguration(
+//     AsyncWebServerRequest *request
+// ) {
+//     DynamicJsonDocument json = proxyOptionsToJSON();
+
+//     AsyncResponseStream *response = request->beginResponseStream("application/json");
+//     serializeJson(json, *response);
+//     request->send(response);
+// }
+
+// static void UpdateMultiUIDConfiguration(
+//     AsyncWebServerRequest *request,
+//     JsonVariant &json
+// ) {
+//     saveMultiUIDOptionsJSON(json);
+//     loadMultiUIDOptionsFromJSON(json);
+// }
+
+#endif

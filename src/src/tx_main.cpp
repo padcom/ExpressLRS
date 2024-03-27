@@ -1311,6 +1311,9 @@ void setup()
     eeprom.Begin(); // Init the eeprom
     config.SetStorageProvider(&eeprom); // Pass pointer to the Config class for access to storage
     config.Load(); // Load the stored values from eeprom
+    #if defined(TARGET_TX)
+    loadMultiUIDOptions();
+    #endif
 
     Radio.currFreq = FHSSgetInitialFreq(); //set frequency first or an error will occur!!!
     #if defined(RADIO_SX127X)
@@ -1433,7 +1436,9 @@ void loop()
   CheckConfigChangePending();
   DynamicPower_Update(now);
   VtxPitmodeSwitchUpdate();
-  DualUIDUpdte();
+  #if defined(TARGET_TX)
+  DualUIDUpdate();
+  #endif
 
   /* Send TLM updates to handset if connected + reporting period
    * is elapsed. This keeps handset happy dispite of the telemetry ratio */
