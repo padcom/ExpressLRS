@@ -1036,6 +1036,9 @@ static void startServices()
   server.on("/hardware.js", WebUpdateSendContent);
   server.on("/hardware.json", getFile).onBody(putFile);
   server.on("/options.json", HTTP_GET, getFile);
+  #if defined(TARGET_TX)
+    server.on("/proxy.json", getFile).onBody(putFile);
+  #endif
   server.on("/reboot", HandleReboot);
   server.on("/reset", HandleReset);
   #ifdef HAS_WIFI_JOYSTICK
