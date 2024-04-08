@@ -242,6 +242,9 @@ static void HandleReset(AsyncWebServerRequest *request)
   if (request->hasArg("options")) {
     SPIFFS.remove("/options.json");
   }
+  if (request->hasArg("proxy")) {
+    SPIFFS.remove("/proxy.json");
+  }
   if (request->hasArg("model") || request->hasArg("config")) {
     config.SetDefaults(true);
   }
