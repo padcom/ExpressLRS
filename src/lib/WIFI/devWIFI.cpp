@@ -1039,6 +1039,7 @@ static void startServices()
   server.on("/options.json", HTTP_GET, getFile);
   #if defined(TARGET_TX)
     server.on("/proxy.json", getFile).onBody(putFile);
+    server.on("/proxy.json", HTTP_OPTIONS, corsPreflightResponse);
   #endif
   server.on("/reboot", HandleReboot);
   server.on("/reset", HandleReset);
