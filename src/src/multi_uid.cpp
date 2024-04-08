@@ -14,14 +14,16 @@ proxy_options_t proxy_options;
 
 void loadMultiUIDDefaults() {
     proxy_options.is_proxy = false;
-    proxy_options.aux = 14;
+    proxy_options.aux_uid_switch = 14;
+    proxy_options.aux_proxy_tx_enable = 14;
     proxy_options.has_proxy_uid = false;
     memset(proxy_options.proxy_uid, 0, UID_LEN);
 }
 
 void loadMultiUIDOptionsFromJSON(DynamicJsonDocument json) {
     proxy_options.is_proxy = json["is-proxy"];
-    proxy_options.aux = json["aux"];
+    proxy_options.aux_uid_switch = json["aux_uid_switch"];
+    proxy_options.aux_proxy_tx_enable = json["aux_proxy_tx_enable"];
     copyArray(json["proxy-uid"], proxy_options.proxy_uid, UID_LEN);
     proxy_options.has_proxy_uid = true;
 }
@@ -111,26 +113,36 @@ void setFirmawareUID() {
 }
 
 int dualUIDAuxState = 0;
+int proxyTxEnableAuxState = 0;
 
 void DualUIDUpdate() {
     if (!proxy_options.has_proxy_uid) return;
 
-    uint8_t currentDualUIDAuxState = CRSF_to_BIT(ChannelData[proxy_options.aux]);
+    uint8_t currentProxyTxEnableAuxState = CRSF_to_BIT(ChannelData[proxy_options.aux_proxy_tx_enable]);
 
     // If channel 14 has changed its value
-    if (dualUIDAuxState != currentDualUIDAuxState) {
-        dualUIDAuxState = currentDualUIDAuxState;
+    if (proxyTxEnableAuxState != currentProxyTxEnableAuxState) {
+        proxyTxEnableAuxState = currentProxyTxEnableAuxState;
 
         if (proxy_options.is_proxy) {
             // If this is the proxy transmitter and we are not transmitting over the proxy
             // then disable sending anything over the link.
-            if (!dualUIDAuxState && hwTimer::running) {
+            if (!proxyTxEnableAuxState && hwTimer::running) {
                 // TODO: THIS MIGHT DISABLE MSP PACKET RETRIEVAL - NEED TO CHECK!!!
                 hwTimer::stop();
             } else if (dualUIDAuxState && !hwTimer::running) {
                 hwTimer::resume();
             }
-        } else if (proxy_options.has_proxy_uid) {
+        }
+    }
+
+    uint8_t currentDualUIDAuxState = CRSF_to_BIT(ChannelData[proxy_options.aux_uid_switch]);
+
+    // If channel 14 has changed its value
+    if (dualUIDAuxState != currentDualUIDAuxState) {
+        dualUIDAuxState = currentDualUIDAuxState;
+
+        if (proxy_options.has_proxy_uid) {
             // This is the actual transmitter and we need to set the current UID
             if (dualUIDAuxState) {
                 setProxyUID();
