@@ -13,19 +13,19 @@
 proxy_options_t proxy_options;
 
 void loadMultiUIDDefaults() {
-    proxy_options.is_proxy = false;
-    proxy_options.aux_uid_switch = 14;
-    proxy_options.aux_proxy_tx_enable = 14;
     proxy_options.has_proxy_uid = false;
+    proxy_options.aux_uid_switch = 0;
+    proxy_options.has_tx_enable = false;
+    proxy_options.aux_tx_enable = 0;
     memset(proxy_options.proxy_uid, 0, UID_LEN);
 }
 
 void loadMultiUIDOptionsFromJSON(DynamicJsonDocument json) {
-    proxy_options.is_proxy = json["is-proxy"];
-    proxy_options.aux_uid_switch = json["aux_uid_switch"];
-    proxy_options.aux_proxy_tx_enable = json["aux_proxy_tx_enable"];
+    proxy_options.aux_uid_switch = json["aux-uid-switch"];
     copyArray(json["proxy-uid"], proxy_options.proxy_uid, UID_LEN);
-    proxy_options.has_proxy_uid = true;
+    proxy_options.has_proxy_uid = json["proxy-uid"].size() == 6 && proxy_options.aux_tx_enable > 0;
+    proxy_options.aux_tx_enable = json["aux-tx-enable"];
+    proxy_options.has_tx_enable = proxy_options.aux_tx_enable > 0;
 }
 
 void loadMultiUIDOptions() {
@@ -113,21 +113,18 @@ void setFirmawareUID() {
 }
 
 int dualUIDAuxState = 0;
-int proxyTxEnableAuxState = 0;
+int txEnableAuxState = 0;
 
 void DualUIDUpdate() {
-    if (!proxy_options.has_proxy_uid) return;
+    if (proxy_options.has_tx_enable) {
+        uint8_t currentTxEnableAuxState = CRSF_to_BIT(ChannelData[proxy_options.aux_tx_enable]);
 
-    uint8_t currentProxyTxEnableAuxState = CRSF_to_BIT(ChannelData[proxy_options.aux_proxy_tx_enable]);
+        if (txEnableAuxState != currentTxEnableAuxState) {
+            txEnableAuxState = currentTxEnableAuxState;
 
-    // If channel 14 has changed its value
-    if (proxyTxEnableAuxState != currentProxyTxEnableAuxState) {
-        proxyTxEnableAuxState = currentProxyTxEnableAuxState;
-
-        if (proxy_options.is_proxy) {
             // If this is the proxy transmitter and we are not transmitting over the proxy
             // then disable sending anything over the link.
-            if (!proxyTxEnableAuxState && hwTimer::running) {
+            if (!txEnableAuxState && hwTimer::running) {
                 // TODO: THIS MIGHT DISABLE MSP PACKET RETRIEVAL - NEED TO CHECK!!!
                 hwTimer::stop();
             } else if (dualUIDAuxState && !hwTimer::running) {
@@ -136,18 +133,19 @@ void DualUIDUpdate() {
         }
     }
 
-    uint8_t currentDualUIDAuxState = CRSF_to_BIT(ChannelData[proxy_options.aux_uid_switch]);
+    if (proxy_options.has_proxy_uid) {
+        uint8_t currentDualUIDAuxState = CRSF_to_BIT(ChannelData[proxy_options.aux_uid_switch]);
 
-    // If channel 14 has changed its value
-    if (dualUIDAuxState != currentDualUIDAuxState) {
-        dualUIDAuxState = currentDualUIDAuxState;
+        if (dualUIDAuxState != currentDualUIDAuxState) {
+            dualUIDAuxState = currentDualUIDAuxState;
 
-        if (proxy_options.has_proxy_uid) {
-            // This is the actual transmitter and we need to set the current UID
-            if (dualUIDAuxState) {
-                setProxyUID();
-            } else {
-                setFirmawareUID();
+            if (proxy_options.has_proxy_uid) {
+                // This is the actual transmitter and we need to set the current UID
+                if (dualUIDAuxState) {
+                    setProxyUID();
+                } else {
+                    setFirmawareUID();
+                }
             }
         }
     }

@@ -5,10 +5,10 @@
 // #include <ESPAsyncWebServer.h>
 
 typedef struct _multiuid_options {
-    bool        is_proxy;
-    uint8_t     aux_uid_switch;
-    uint8_t     aux_proxy_tx_enable;
     bool        has_proxy_uid;
+    uint8_t     aux_uid_switch;
+    bool        has_tx_enable;
+    uint8_t     aux_tx_enable;
     uint8_t     proxy_uid[UID_LEN];
 } proxy_options_t;
 
