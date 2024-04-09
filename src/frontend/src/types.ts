@@ -17,14 +17,15 @@ export const RegulatoryDomains = [
 
 export type RegulatoryDomain = typeof RegulatoryDomains[number]
 
+export type RadioType = 'TX' | 'RX'
+
 export interface TargetConfiguration {
   'target': string
   'version': string
   'product_name': string
   'lua_name': string
   'reg_domain': RegulatoryDomain
-  'is-tx': boolean
-  'is-rx': boolean
+  'radio-type': RadioType
   'is-sx127x': boolean
   'is-lr1121': boolean
   'has-sub-ghz': boolean
