@@ -1012,8 +1012,9 @@ static void startServices()
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "*");
 
   server.on("/", WebUpdateHandleRoot);
-  server.on("/hardware", WebUpdateHandleRoot);
-  server.on("/cw", WebUpdateHandleRoot);
+  server.on("/index.html", WebUpdateHandleRoot);
+  server.on("/hardware.html", WebUpdateHandleRoot);
+  server.on("/cw.html", WebUpdateHandleRoot);
   server.on("/index.js", WebUpdateSendContent);
   server.on("/index.css", WebUpdateSendContent);
   server.on("/networks.json", WebUpdateSendNetworks);

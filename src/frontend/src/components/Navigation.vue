@@ -6,8 +6,13 @@
       </RouterLink>
     </li>
     <li>
-      <RouterLink :to="target('/hardware')">
+      <RouterLink :to="target('/hardware.html')">
         Hardware
+      </RouterLink>
+    </li>
+    <li>
+      <RouterLink :to="target('/cw.html')">
+        Constant Wave
       </RouterLink>
     </li>
   </ul>
