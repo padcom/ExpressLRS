@@ -313,6 +313,7 @@ static void GetConfiguration(AsyncWebServerRequest *request)
     button_count = 1;
   if (GPIO_PIN_BUTTON2 != UNDEF_PIN)
     button_count = 2;
+
   for (int button=0 ; button<button_count ; button++)
   {
     const tx_button_color_t *buttonColor = config.GetButtonActions(button);
@@ -543,6 +544,25 @@ static void WebUpdateGetTarget(AsyncWebServerRequest *request)
   json["product_name"] = product_name;
   json["lua_name"] = device_name;
   json["reg_domain"] = FHSSgetRegulatoryDomain();
+  json["git-commit"] = commit;
+#if defined(TARGET_TX)
+  json["is-tx"] = true;
+#endif
+#if defined(TARGET_RX)
+  json["is-rx"] = true;
+#endif
+#if defined(RADIO_SX127X)
+  json["is-sx127x"] = true;
+  json["has-sub-ghz"] = true;
+#endif
+#if defined(RADIO_LR1121)
+  json["is-lr1121"] = true;
+  json["has-sub-ghz"] = true;
+#endif
+#if defined(ENABLE_MULTI_UID)
+  json["multi-uid"] = true;
+#endif
+
   AsyncResponseStream *response = request->beginResponseStream("application/json");
   serializeJson(json, *response);
   request->send(response);
