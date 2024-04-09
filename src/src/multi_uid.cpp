@@ -22,29 +22,48 @@ void loadMultiUIDDefaults() {
 
 void loadMultiUIDOptionsFromJSON(DynamicJsonDocument json) {
     proxy_options.aux_uid_switch = json["aux-uid-switch"];
+    DBGLN("multi-uid: json.aux-uid-switch == %d", json["aux-uid-switch"]);
+    DBGLN("multi-uid: aux_uid_switch == %d", proxy_options.aux_uid_switch);
+
     copyArray(json["proxy-uid"], proxy_options.proxy_uid, UID_LEN);
-    proxy_options.has_proxy_uid = json["proxy-uid"].size() == 6 && proxy_options.aux_tx_enable > 0;
+    DBGLN("multi-uid: json.proxy-uid.size() == %d", json["proxy-uid"].size());
+    DBGLN("multi-uid: proxy_options.proxy_uid == %d,%d,%d,%d,%d,%d",
+        proxy_options.proxy_uid[0],
+        proxy_options.proxy_uid[1],
+        proxy_options.proxy_uid[2],
+        proxy_options.proxy_uid[3],
+        proxy_options.proxy_uid[4],
+        proxy_options.proxy_uid[5]);
+
+    proxy_options.has_proxy_uid = json["proxy-uid"].size() == 6 && proxy_options.aux_uid_switch > 0;
+    DBGLN("multi-uid: has_proxy_uid == %d", proxy_options.has_proxy_uid);
+
     proxy_options.aux_tx_enable = json["aux-tx-enable"];
+    DBGLN("multi-uid: json.aux-tx-enable == %d", json["aux-tx-enable"]);
+    DBGLN("multi-uid: aux_tx_enable == %d", proxy_options.aux_tx_enable);
+
     proxy_options.has_tx_enable = proxy_options.aux_tx_enable > 0;
+    DBGLN("multi-uid: has_tx_enable == %d", proxy_options.has_tx_enable);
 }
 
 void loadMultiUIDOptions() {
+    DBGLN("multi-uid: Loading Multi-UID options");
     DynamicJsonDocument json(1024);
 
     File file = SPIFFS.open("/proxy.json", "r");
     if (file && !file.isDirectory()) {
         DeserializationError error = deserializeJson(json, file);
         if (error) {
-            DBGLN("Error loading proxy.json: %d", error.code());
+            DBGLN("multi-uid: Error loading proxy.json: %d", error.code());
             return;
         }
         loadMultiUIDOptionsFromJSON(json);
 
-        DBGLN("proxy.json loaded");
+        DBGLN("multi-uid: proxy.json loaded");
     } else {
         loadMultiUIDDefaults();
 
-        DBGLN("proxy.json not found - loaded defaults");
+        DBGLN("multi-uid: proxy.json not found - loaded defaults");
     }
     file.close();
 }
@@ -64,7 +83,7 @@ void loadMultiUIDOptions() {
 //     serializeJson(json, file);
 //     file.close();
 
-//     DBGLN("proxy.json saved");
+//     DBGLN("multi-uid: proxy.json saved");
 // }
 
 // void saveMultiUIDOptions() {
@@ -88,7 +107,7 @@ static void setupBindingFromConfig()
 #endif
   }
 
-  DBGLN("UID=(%d, %d, %d, %d, %d, %d)", UID[0], UID[1], UID[2], UID[3], UID[4], UID[5]);
+  DBGLN("multi-uid: Current UID == %d,%d,%d,%d,%d,%d", UID[0], UID[1], UID[2], UID[3], UID[4], UID[5]);
 
   OtaUpdateCrcInitFromUid();
 }
@@ -122,6 +141,8 @@ void DualUIDUpdate() {
         if (txEnableAuxState != currentTxEnableAuxState) {
             txEnableAuxState = currentTxEnableAuxState;
 
+            DBGLN("multi-uid: currentTxEnableAuxState == %d", currentTxEnableAuxState);
+
             // If this is the proxy transmitter and we are not transmitting over the proxy
             // then disable sending anything over the link.
             if (!txEnableAuxState && hwTimer::running) {
@@ -139,11 +160,15 @@ void DualUIDUpdate() {
         if (dualUIDAuxState != currentDualUIDAuxState) {
             dualUIDAuxState = currentDualUIDAuxState;
 
+            DBGLN("multi-uid: currentDualUIDAuxState == %d", currentDualUIDAuxState);
+
             if (proxy_options.has_proxy_uid) {
                 // This is the actual transmitter and we need to set the current UID
                 if (dualUIDAuxState) {
+                    DBGLN("multi-uid: setting proxy UID");
                     setProxyUID();
                 } else {
+                    DBGLN("multi-uid: setting primary UID");
                     setFirmawareUID();
                 }
             }
