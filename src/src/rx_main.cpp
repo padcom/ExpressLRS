@@ -323,7 +323,7 @@ void SetRFLinkRate(uint8_t index, bool bindMode) // Set speed of RF link
 #endif
 
     hwTimer::updateInterval(interval);
-    
+
     FHSSusePrimaryFreqBand = !(ModParams->radio_type == RADIO_TYPE_LR1121_LORA_2G4);
     FHSSuseDualBand = ModParams->radio_type == RADIO_TYPE_LR1121_LORA_DUAL;
 
@@ -376,7 +376,7 @@ bool ICACHE_RAM_ATTR HandleFHSS()
 
     if (geminiMode)
     {
-        if ((((OtaNonce + 1)/ExpressLRS_currAirRate_Modparams->FHSShopInterval) % 2 == 0) || FHSSuseDualBand) // When in DualBand do not switch between radios.  The OTA modulation paramters and HighFreq/LowFreq Tx amps are set during Config. 
+        if ((((OtaNonce + 1)/ExpressLRS_currAirRate_Modparams->FHSShopInterval) % 2 == 0) || FHSSuseDualBand) // When in DualBand do not switch between radios.  The OTA modulation paramters and HighFreq/LowFreq Tx amps are set during Config.
         {
             Radio.SetFrequencyReg(FHSSgetNextFreq(), SX12XX_Radio_1);
             Radio.SetFrequencyReg(FHSSgetGeminiFreq(), SX12XX_Radio_2);
@@ -1780,6 +1780,8 @@ void resetConfigAndReboot()
 #if defined(PLATFORM_STM32)
     HAL_NVIC_SystemReset();
 #else
+    // TODO: This can't format the SPIFFS as the FE code is now stored in there.
+
     // Prevent WDT from rebooting too early if
     // all this flash write is taking too long
     yield();
