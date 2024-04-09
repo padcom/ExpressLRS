@@ -150,23 +150,40 @@ static bool captivePortal(AsyncWebServerRequest *request)
 
 static struct {
   const char *url;
-  const char *contentType;
   const uint8_t* content;
   const size_t size;
 } files[] = {
-  {"/scan.js", "text/javascript", (uint8_t *)SCAN_JS, sizeof(SCAN_JS)},
-  {"/mui.js", "text/javascript", (uint8_t *)MUI_JS, sizeof(MUI_JS)},
-  {"/elrs.css", "text/css", (uint8_t *)ELRS_CSS, sizeof(ELRS_CSS)},
-  {"/hardware.html", "text/html", (uint8_t *)HARDWARE_HTML, sizeof(HARDWARE_HTML)},
-  {"/hardware.js", "text/javascript", (uint8_t *)HARDWARE_JS, sizeof(HARDWARE_JS)},
-  {"/cw.html", "text/html", (uint8_t *)CW_HTML, sizeof(CW_HTML)},
-  {"/cw.js", "text/javascript", (uint8_t *)CW_JS, sizeof(CW_JS)},
+  {"/index.js", (uint8_t *)INDEX_JS, sizeof(INDEX_JS)},
+  {"/index.css", (uint8_t *)INDEX_CSS, sizeof(INDEX_CSS)},
 };
 
-static void WebUpdateHandleRoot(AsyncWebServerRequest *request) {
-  if (!captivePortal(request)) {
-    request->send(SPIFFS, "/index.html", "text/html", false);
+static void WebUpdateSendContent(AsyncWebServerRequest *request)
+{
+  for (size_t i=0 ; i<ARRAY_SIZE(files) ; i++) {
+    if (request->url().equals(files[i].url)) {
+      String contentType = getContentType(request->url());
+      DBGLN("Content type for %s: %s", request->url(), contentType);
+      AsyncWebServerResponse *response = request->beginResponse_P(200, contentType, files[i].content, files[i].size);
+      response->addHeader("Content-Encoding", "gzip");
+      request->send(response);
+      return;
+    }
   }
+  request->send(404, "text/plain", "File not found");
+}
+
+static void WebUpdateHandleRoot(AsyncWebServerRequest *request)
+{
+  if (captivePortal(request))
+  { // If captive portal redirect instead of displaying the page.
+    return;
+  }
+  AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", (uint8_t*)INDEX_HTML, sizeof(INDEX_HTML));
+  response->addHeader("Content-Encoding", "gzip");
+  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  response->addHeader("Pragma", "no-cache");
+  response->addHeader("Expires", "-1");
+  request->send(response);
 }
 
 static void putFile(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
@@ -191,7 +208,7 @@ static void getFile(AsyncWebServerRequest *request)
   } else if (request->url() == "/hardware.json") {
     request->send(200, "application/json", getHardware());
   } else {
-    request->send(SPIFFS, request->url().c_str(), "", false);
+    request->send(SPIFFS, request->url().c_str(), "text/plain", true);
   }
 }
 
@@ -989,12 +1006,14 @@ static void startServices()
     return;
   }
 
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  DefaultHeaders::Instance().addHeader("Access-Control-Max-Age", "600");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "*");
+
   server.on("/", WebUpdateHandleRoot);
-  server.on("/index.html", getFile);
-  server.on("/index.css", getFile);
-  server.on("/index.js", getFile);
-  server.on("/", WebUpdateHandleRoot);
-  server.on("/hardware", WebUpdateHandleRoot);
+  server.on("/index.js", WebUpdateSendContent);
+  server.on("/index.css", WebUpdateSendContent);
   server.on("/networks.json", WebUpdateSendNetworks);
   server.on("/sethome", WebUpdateSetHome);
   server.on("/forget", WebUpdateForget);
@@ -1020,17 +1039,10 @@ static void startServices()
   #ifdef RADIO_SX128X
   server.on("/cw", HandleContinuousWave);
   #endif
-
-  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
-  DefaultHeaders::Instance().addHeader("Access-Control-Max-Age", "600");
-  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
-  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "*");
-
   server.on("/hardware.json", getFile).onBody(putFile);
   server.on("/options.json", HTTP_GET, getFile);
   #if defined(TARGET_TX)
     server.on("/proxy.json", getFile).onBody(putFile);
-    server.on("/proxy.json", HTTP_OPTIONS, corsPreflightResponse);
   #endif
   server.on("/reboot", HandleReboot);
   server.on("/reset", HandleReset);

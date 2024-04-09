@@ -1,0 +1,43 @@
+@import "@padcom/nano-css-reset";
+
+html, body {
+  --clr-error: #d85261;
+  --clr-success: #2dd284;
+  --clr-warning: #fada5e;
+  --clr-info: #88cef7;
+  --clr-question: #779ecb;
+  --clr-danger: #ffc107;
+  --clr-btn-primary: #2196F3;
+  --clr-btn-secondary: #4f4f4f;
+  --clr-btn-tertiary: #f8f8f8;
+  --clr-btn-danger: #F44336;
+  --clr-btn-disabled: #cccccc;
+  --select-arrow: #aaaaaa;
+  --clr-dropdown-options-bg: #e7ecf5;
+  --clr-dropdown-options-hover: var(--clr-dropdown-options-bg);
+  --dropdown-options-shadow: 0px -8px 34px 0px rgba(0,0,0,0.05);
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+strong {
+  font-weight: 600;
+}
+
+a {
+  color: var(--clr-btn-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.list {
+  padding-left: 24px;
+}
+
+.paragraph {
+  margin-bottom: 16px;
+}

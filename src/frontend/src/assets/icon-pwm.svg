@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+  width="24px" height="24px" viewBox="0 0 400 400"
+>
+  <g stroke="#C462DD" stroke-width="10" stroke-linecap="undefined" stroke-linejoin="undefined" fill="none">
+    <line y2="318" x2="2" y1="318" x1="106"/>
+    <line y2="74" x2="105" y1="323.00001" x1="105"/>
+    <line y2="79" x2="254.00001" y1="79" x1="106"/>
+    <line y2="323" x2="249" y1="79" x1="249"/>
+    <line y2="318" x2="248" y1="318" x1="320"/>
+    <line y2="317" x2="315" y1="77" x1="315"/>
+    <line y2="77" x2="310" y1="77" x1="377"/>
+    <line y2="78" x2="372" y1="322.00001" x1="372"/>
+    <line y2="317" x2="371" y1="317" x1="399"/>
+  </g>
+</svg>

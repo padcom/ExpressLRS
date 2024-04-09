@@ -27,42 +27,25 @@ def compress(data):
         f.write(data)
     return buf.getvalue()
 
-def build_html(mainfile, var, out, env, isTX=False):
+def build_html(mainfile, var, out):
     engine = Engine(
-        loader=FileLoader(["html"]),
-        extensions=[CoreExtension("@@")]
+        loader=FileLoader(["frontend/dist"]),
+        extensions=[CoreExtension("@@@@@@@")]
     )
     template = engine.get_template(mainfile)
-    has_sub_ghz = '-DRADIO_SX127X=1' in env['BUILD_FLAGS'] or '-DRADIO_LR1121=1' in env['BUILD_FLAGS']
-    data = template.render({
-            'VERSION': get_version(env),
-            'PLATFORM': re.sub("_via_.*", "", env['PIOENV']),
-            'isTX': isTX,
-            'hasSubGHz': has_sub_ghz
-        })
-    if mainfile.endswith('.html'):
-        data = html_minifier.html_minify(data)
-    if mainfile.endswith('.css'):
-        data = rcssmin.cssmin(data)
-    if mainfile.endswith('.js'):
-        data = rjsmin.jsmin(data)
+    data = template.render({})
     out.write('static const char PROGMEM %s[] = {\n' % var)
-    # out.write(','.join("0x{:02x}".format(c) for c in compress(data.encode('utf-8'))))
+    out.write(','.join("0x{:02x}".format(c) for c in compress(data.encode('utf-8'))))
     out.write('\n};\n\n')
 
-def build_common(env, mainfile, isTX):
+def build_common(env, mainfile):
     fd, path = tempfile.mkstemp()
     try:
         with os.fdopen(fd, 'w') as out:
             build_version(out, env)
-            build_html(mainfile, "INDEX_HTML", out, env, isTX)
-            build_html("scan.js", "SCAN_JS", out, env, isTX)
-            build_html("mui.js", "MUI_JS", out, env)
-            build_html("elrs.css", "ELRS_CSS", out, env)
-            build_html("hardware.html", "HARDWARE_HTML", out, env, isTX)
-            build_html("hardware.js", "HARDWARE_JS", out, env)
-            build_html("cw.html", "CW_HTML", out, env)
-            build_html("cw.js", "CW_JS", out, env)
+            build_html(mainfile, "INDEX_HTML", out)
+            build_html("index.js", "INDEX_JS", out)
+            build_html("index.css", "INDEX_CSS", out)
 
     finally:
         if not os.path.exists("include/WebContent.h") or not filecmp.cmp(path, "include/WebContent.h"):
@@ -70,4 +53,4 @@ def build_common(env, mainfile, isTX):
         os.remove(path)
 
 target_name = env['PIOENV'].upper()
-build_common(env, "index.html", not '_RX_' in target_name)
+build_common(env, "index.html")
