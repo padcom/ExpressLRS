@@ -163,40 +163,10 @@ static struct {
   {"/cw.js", "text/javascript", (uint8_t *)CW_JS, sizeof(CW_JS)},
 };
 
-static void WebUpdateSendContent(AsyncWebServerRequest *request)
-{
-  for (size_t i=0 ; i<ARRAY_SIZE(files) ; i++) {
-    if (request->url().equals(files[i].url)) {
-      AsyncWebServerResponse *response = request->beginResponse_P(200, files[i].contentType, files[i].content, files[i].size);
-      response->addHeader("Content-Encoding", "gzip");
-      request->send(response);
-      return;
-    }
+static void WebUpdateHandleRoot(AsyncWebServerRequest *request) {
+  if (!captivePortal(request)) {
+    request->send(SPIFFS, "/index.html", "text/html", false);
   }
-  request->send(404, "text/plain", "File not found");
-}
-
-static void WebUpdateHandleRoot(AsyncWebServerRequest *request)
-{
-  if (captivePortal(request))
-  { // If captive portal redirect instead of displaying the page.
-    return;
-  }
-  force_update = request->hasArg("force");
-  AsyncWebServerResponse *response;
-  if (connectionState == hardwareUndefined)
-  {
-    response = request->beginResponse_P(200, "text/html", (uint8_t*)HARDWARE_HTML, sizeof(HARDWARE_HTML));
-  }
-  else
-  {
-    response = request->beginResponse_P(200, "text/html", (uint8_t*)INDEX_HTML, sizeof(INDEX_HTML));
-  }
-  response->addHeader("Content-Encoding", "gzip");
-  response->addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  response->addHeader("Pragma", "no-cache");
-  response->addHeader("Expires", "-1");
-  request->send(response);
 }
 
 static void putFile(AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total)
@@ -221,7 +191,7 @@ static void getFile(AsyncWebServerRequest *request)
   } else if (request->url() == "/hardware.json") {
     request->send(200, "application/json", getHardware());
   } else {
-    request->send(SPIFFS, request->url().c_str(), "text/plain", true);
+    request->send(SPIFFS, request->url().c_str(), "", false);
   }
 }
 
@@ -1020,9 +990,11 @@ static void startServices()
   }
 
   server.on("/", WebUpdateHandleRoot);
-  server.on("/elrs.css", WebUpdateSendContent);
-  server.on("/mui.js", WebUpdateSendContent);
-  server.on("/scan.js", WebUpdateSendContent);
+  server.on("/index.html", getFile);
+  server.on("/index.css", getFile);
+  server.on("/index.js", getFile);
+  server.on("/", WebUpdateHandleRoot);
+  server.on("/hardware", WebUpdateHandleRoot);
   server.on("/networks.json", WebUpdateSendNetworks);
   server.on("/sethome", WebUpdateSetHome);
   server.on("/forget", WebUpdateForget);
@@ -1046,8 +1018,6 @@ static void startServices()
   server.on("/forceupdate", WebUploadForceUpdateHandler);
   server.on("/forceupdate", HTTP_OPTIONS, corsPreflightResponse);
   #ifdef RADIO_SX128X
-  server.on("/cw.html", WebUpdateSendContent);
-  server.on("/cw.js", WebUpdateSendContent);
   server.on("/cw", HandleContinuousWave);
   #endif
 
@@ -1056,8 +1026,6 @@ static void startServices()
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS");
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "*");
 
-  server.on("/hardware.html", WebUpdateSendContent);
-  server.on("/hardware.js", WebUpdateSendContent);
   server.on("/hardware.json", getFile).onBody(putFile);
   server.on("/options.json", HTTP_GET, getFile);
   #if defined(TARGET_TX)

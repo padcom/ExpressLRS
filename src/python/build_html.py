@@ -47,7 +47,7 @@ def build_html(mainfile, var, out, env, isTX=False):
     if mainfile.endswith('.js'):
         data = rjsmin.jsmin(data)
     out.write('static const char PROGMEM %s[] = {\n' % var)
-    out.write(','.join("0x{:02x}".format(c) for c in compress(data.encode('utf-8'))))
+    # out.write(','.join("0x{:02x}".format(c) for c in compress(data.encode('utf-8'))))
     out.write('\n};\n\n')
 
 def build_common(env, mainfile, isTX):
