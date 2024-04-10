@@ -25,7 +25,7 @@
     </Actions>
 
     <Content v-if="processing">
-      <NumericInput v-model="centerFrequency" label="Center Frequency" />
+      <NumericInput v-model="centerFrequency" label="Center Frequency" step="1000" />
       <table class="results">
         <tr>
           <td>Calculated XO Freq</td>
