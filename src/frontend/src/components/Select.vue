@@ -41,7 +41,7 @@ select, .select:after {
   justify-self: end;
   width: 0.8em;
   height: 0.5em;
-  background-color: var(--select-arrow);
+  background-color: var(--clr-select-arrow);
   clip-path: polygon(100% 0%, 0 0%, 50% 100%);
 }
 </style>

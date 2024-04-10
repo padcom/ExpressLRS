@@ -12,7 +12,8 @@ html, body {
   --clr-btn-tertiary: #f8f8f8;
   --clr-btn-danger: #F44336;
   --clr-btn-disabled: #cccccc;
-  --select-arrow: #aaaaaa;
+  --clr-select-arrow: #aaaaaa;
+  --clr-border-bottom: rgba(0,0,0,0.26);
   --clr-dropdown-options-bg: #e7ecf5;
   --clr-dropdown-options-hover: var(--clr-dropdown-options-bg);
   --dropdown-options-shadow: 0px -8px 34px 0px rgba(0,0,0,0.05);

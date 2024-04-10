@@ -33,9 +33,9 @@ export type AlertType = 'error' | 'success' | 'warning' | 'info' | 'question'
 import { computed, ref } from 'vue'
 
 import Button from '@/components/Button.vue'
-import infoSvg from './alert/info.svg?component'
-import successSvg from './alert/success.svg?component'
-import errorSvg from './alert/error.svg?component'
+import infoSvg from './alert/info.svg'
+import successSvg from './alert/success.svg'
+import errorSvg from './alert/error.svg'
 
 const visible = ref(false)
 const alertType = ref<AlertType>('info')

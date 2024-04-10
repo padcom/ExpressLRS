@@ -1,6 +1,6 @@
 <template>
   <Tabs>
-    <Tab v-if="!isTx" title="Model">
+    <Tab v-if="isRx" title="Model">
       <Model />
     </Tab>
     <Tab title="Options">
@@ -25,8 +25,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 
-import Tabs from './home/components/Tabs.vue'
-import Tab from './home/components/Tab.vue'
+import Tabs from '@/components/Tabs.vue'
+import Tab from '@/components/Tab.vue'
 import Model from './home/Model.vue'
 import Options from './home/Options.vue'
 import Proxy from './home/Proxy.vue'
@@ -39,7 +39,7 @@ import { useTarget } from '@/composables/target'
 import { useNetworks } from '@/composables/networks'
 
 const { load } = useConfig()
-const { isTx, multiUID } = useTarget()
+const { isRx, isTx, multiUID } = useTarget()
 const { load: loadWiFiNetworks } = useNetworks()
 const autoPopulateWifiNetworks = ref(false)
 

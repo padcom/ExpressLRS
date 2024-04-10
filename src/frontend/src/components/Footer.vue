@@ -17,9 +17,9 @@
 
 <script lang="ts" setup>
 import FooterItem from './footer/FooterItem.vue'
-import GitHub from './footer/github.svg?component'
-import Discord from './footer/discord.svg?component'
-import Facebook from './footer/facebook.svg?component'
+import GitHub from './footer/github.svg'
+import Discord from './footer/discord.svg'
+import Facebook from './footer/facebook.svg'
 </script>
 
 <style lang="postcss" scoped>

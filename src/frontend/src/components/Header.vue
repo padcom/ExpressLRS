@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-import Logo from '@/assets/logo.svg?component'
+import Logo from '@/assets/logo.svg'
 
 import { useTarget } from '@/composables/target'
 

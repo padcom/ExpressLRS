@@ -31,7 +31,7 @@ const id = uniqueId()
   & ::v-deep(input),
   & ::v-deep(select) {
     border: none;
-    border-bottom: solid 1px rgba(0,0,0,0.26);
+    border-bottom: solid 1px var(--clr-border-bottom);
     font-size: 16px;
     outline: none;
     margin-bottom: 2px;
