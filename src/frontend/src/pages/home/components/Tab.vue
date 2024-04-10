@@ -23,12 +23,10 @@ function onTabSelected(tab: Tab) {
 }
 
 onMounted(() => {
-  console.log('Adding tab', props.title, `(${props.id})`)
   addTab({ title: props.title, id: props.id, onTabSelected })
 })
 
 onBeforeUnmount(() => {
-  console.log('Removing tab', props.title, `(${props.id})`)
   removeTab({ title: props.title, id: props.id, onTabSelected })
 })
 </script>
