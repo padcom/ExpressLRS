@@ -106,7 +106,7 @@ async function forget() {
 
 <style lang="postcss" scoped>
 .ssid.loading ::v-deep(input) {
-  background: url('@/assets/wifi.svg');
+  background: url('./wifi.svg');
   background-repeat: no-repeat;
   background-position: right;
 }

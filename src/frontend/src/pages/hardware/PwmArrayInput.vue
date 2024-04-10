@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import Field from './Field.vue'
-import icon from '@/assets/icon-pwm.svg?inline'
+import icon from './icon-pwm.svg?inline'
 import { arrayEditableValue } from '@/composables/editable-value'
 
 const value = defineModel({ type: Array, default: () => [] })

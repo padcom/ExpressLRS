@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 import Field from './Field.vue'
-import Icon from '@/assets/icon-analog.svg'
+import Icon from './icon-analog.svg'
 
 const value = defineModel({ type: Number })
 </script>

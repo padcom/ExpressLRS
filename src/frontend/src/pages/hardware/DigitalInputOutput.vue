@@ -13,8 +13,8 @@
 
 <script lang="ts" setup>
 import Field from './Field.vue'
-import IconInput from '@/assets/icon-input.svg'
-import IconOutput from '@/assets/icon-output.svg'
+import IconInput from './icon-input.svg'
+import IconOutput from './icon-output.svg'
 import { numericEditableValue } from '@/composables/editable-value'
 
 const value = defineModel({ type: Number })
