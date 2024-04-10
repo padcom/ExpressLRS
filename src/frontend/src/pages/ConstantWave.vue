@@ -97,6 +97,10 @@ onMounted(async () => {
 </script>
 
 <style lang="postcss" scoped>
+p + p {
+  margin-top: 8px;
+}
+
 .results {
   border-collapse: collapse;
 
