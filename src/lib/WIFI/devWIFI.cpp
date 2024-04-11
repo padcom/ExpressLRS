@@ -157,6 +157,14 @@ static struct {
   {"/index.css", (uint8_t *)INDEX_CSS, sizeof(INDEX_CSS)},
 };
 
+String getContentType(const String& path){
+  if (path.endsWith(".html")) return "text/html";
+  else if (path.endsWith(".css")) return "text/css";
+  else if (path.endsWith(".js")) return "application/javascript";
+  else if (path.endsWith(".json")) return "application/json";
+  else return "text/plain";
+}
+
 static void WebUpdateSendContent(AsyncWebServerRequest *request)
 {
   for (size_t i=0 ; i<ARRAY_SIZE(files) ; i++) {
