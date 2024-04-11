@@ -155,7 +155,9 @@
       />
       <ArrayInput v-model="hardware.power_values2"
         label="Secondary Power Value(s)"
-        description="Comma-separated list of values that set the power output (if using a DAC then these set the Semtech power output)"
+        description="
+          Comma-separated list of values that set the power output (if using a DAC then these set the Semtech power output)
+        "
       />
       <ArrayInput v-model="hardware.power_values_dual"
         label="Dual Power Value(s)"
@@ -369,7 +371,9 @@
       />
       <ArrayInput v-model="hardware.misc_fan_speeds"
         label="Fan PWM output values"
-        description="If the fan is PWM controlled, then this is the list of values for the PWM output for the matching power output levels"
+        description="
+          If the fan is PWM controlled, then this is the list of values for the PWM output for the matching power output levels
+        "
       />
       <DigitalInput v-model="hardware.misc_fan_tacho"
         label="Fan TACHO pin"
@@ -420,7 +424,10 @@
     <Section v-if="!isTx" name="SPI VTX">
       <PwmOutput v-model="hardware.vtx_amp_pwm"
         label="RF amp PWM pin"
-        description="Set the power output level of the VTX PA (value is calculated based on power and frequency using VPD interpolation values)"
+        description="
+          Set the power output level of the VTX PA (value is calculated based on power and frequency using
+          VPD interpolation values)
+        "
       />
       <AnalogInput v-model="hardware.vtx_amp_vpd"
         label="RF amp VPD pin"
@@ -484,8 +491,6 @@
 
 <script lang="ts" setup>
 import { onMounted } from 'vue'
-import { useTarget } from '@/composables/target'
-import { useHardware } from '@/composables/hardware'
 
 import Section from './hardware/Section.vue'
 import AnalogInput from './hardware/AnalogInput.vue'
@@ -504,9 +509,13 @@ import PowerLevelControlSelect from './hardware/PowerLevelControlSelect.vue'
 import VBatAttenuationSelect from './hardware/VBatAttenuationSelect.vue'
 import Actions from '@/components/Actions.vue'
 import Button from '@/components/Button.vue'
+
+import { useTarget } from '@/composables/target'
+import { useHardware } from '@/composables/hardware'
 import { useAlert } from '@/composables/alert'
 
-const { hardware, load, save: saveHardware, reset: resetHardware, reboot } = useHardware()
+const { reboot } = useTarget()
+const { hardware, load, save: saveHardware, reset: resetHardware } = useHardware()
 const { isTx } = useTarget()
 const { question, info, error } = useAlert()
 

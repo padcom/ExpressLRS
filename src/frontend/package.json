@@ -39,10 +39,6 @@
       "@padcom/eslint-config-vue"
     ],
     "rules": {
-      "max-len": [
-        "error",
-        145
-      ],
       "@typescript-eslint/no-non-null-assertion": 0,
       "require-atomic-updates": 0
     }

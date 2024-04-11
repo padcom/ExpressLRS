@@ -2,14 +2,14 @@
 import { ref } from 'vue'
 
 import { singleton } from '@/lib/singleton'
-import { http } from '@/lib/http-client'
-import { cleanupObjectFromUndefined } from '@/lib/object-cleaner'
+import { HardwareAPI } from '@/api'
 
 export const useHardware = singleton(() => {
   const hardware = ref<any>()
 
   async function load() {
-    const response = await http(`/hardware.json`)
+    const response = await new HardwareAPI().load()
+
     if (response.ok) {
       hardware.value = await response.json()
     } else {
@@ -20,16 +20,7 @@ export const useHardware = singleton(() => {
   async function save() {
     if (!hardware.value) return false
 
-    const body = {
-      customised: true,
-      ...cleanupObjectFromUndefined(hardware.value),
-    }
-
-    const response = await http(`/hardware.json`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
+    const response = await new HardwareAPI().save(hardware.value)
 
     if (response.ok) {
       hardware.value = await response.json()
@@ -41,16 +32,10 @@ export const useHardware = singleton(() => {
   }
 
   async function reset() {
-    const response = await http(`/reset?hardware`, { method: 'POST' })
+    const response = await new HardwareAPI().reset()
 
     return response.ok
   }
 
-  async function reboot() {
-    const response = await http(`/reboot`, { method: 'POST' })
-
-    return response.ok
-  }
-
-  return { hardware, load, save, reset, reboot }
+  return { hardware, load, save, reset }
 })

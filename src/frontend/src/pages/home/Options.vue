@@ -70,14 +70,13 @@ import Button from '@/components/Button.vue'
 import { useConfig } from '@/composables/config'
 import { useTarget } from '@/composables/target'
 import { useAlert } from '@/composables/alert'
-import { useHardware } from '@/composables/hardware'
 import { useOptions } from '@/composables/options'
 import { isEmptyUID, uid } from '@/lib/uid'
 
 const bindingPhrase = ref('')
 const { config, originalUID, originalUIDType } = useConfig()
 const { question, error, info } = useAlert()
-const { reboot } = useHardware()
+const { reboot } = useTarget()
 const { save: saveOptions, reset: resetOptions } = useOptions()
 
 watch(bindingPhrase, newValue => {
@@ -132,7 +131,8 @@ const uidLabel = computed(() => {
     return {
       bg: '#689F38', fg: 'black',
       type: uidtype,
-      description: 'The binding UID has been generated from a binding phrase previously entered into the "binding phrase" field above',
+      description:
+        'The binding UID has been generated from a binding phrase previously entered into the "binding phrase" field above',
     }
   } else if (uidtype === 'Modified') {
     return {

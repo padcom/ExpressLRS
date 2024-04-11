@@ -2,15 +2,13 @@
 import { ref } from 'vue'
 
 import { singleton } from '@/lib/singleton'
-import { http } from '@/lib/http-client'
-
-export type RadioNumber = '1' | '2'
+import { ConstantWaveAPI, type RadioNumber } from '@/api'
 
 export const useConstantWave = singleton(() => {
   const processing = ref<any>()
 
   async function getNumberOfRadios() {
-    const response = await http('/cw')
+    const response = await new ConstantWaveAPI().getNumberOfRadio()
 
     return {
       status: response.ok ? 'ok' : 'error',
@@ -20,9 +18,7 @@ export const useConstantWave = singleton(() => {
   }
 
   async function start(radio: RadioNumber) {
-    const body = new FormData()
-    body.append('radio', String(radio))
-    const response = await http('/cw', { method: 'POST', body })
+    const response = await new ConstantWaveAPI().startConstantWave(radio)
 
     processing.value = response.ok
 

@@ -3,14 +3,15 @@ import { ref } from 'vue'
 
 import type { BuildOptions } from '@/types'
 import { singleton } from '@/lib/singleton'
-import { http } from '@/lib/http-client'
 import { useConfig } from './config'
+import { OptionsAPI } from '@/api'
 
 export const useOptions = singleton(() => {
   const options = ref<BuildOptions>()
 
   async function load() {
-    const response = await http(`/options.json`)
+    const response = await new OptionsAPI().load()
+
     if (response.ok) {
       options.value = await response.json()
       const { config } = useConfig()
@@ -31,15 +32,7 @@ export const useOptions = singleton(() => {
       }
     }
 
-    const response = await http(`/options.json`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...options.value,
-        customised: true,
-        uid: config.value.config.uid,
-      }),
-    })
+    const response = await new OptionsAPI().save(config.value, config.value.config.uid)
 
     return {
       status: response.ok ? 'ok' : 'error',
@@ -48,7 +41,7 @@ export const useOptions = singleton(() => {
   }
 
   async function reset() {
-    const response = await http(`/reset?options`, { method: 'POST' })
+    const response = await new OptionsAPI().reset()
 
     return {
       status: response.ok ? 'ok' : 'error',

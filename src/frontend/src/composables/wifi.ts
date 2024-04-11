@@ -1,16 +1,10 @@
 import { singleton } from '@/lib/singleton'
-import { http } from '@/lib/http-client'
+import { WiFiAPI } from '@/api'
 
 // eslint-disable-next-line max-lines-per-function
 export const useWiFi = singleton(() => {
   async function connectToNetwork(ssid: string, password: string, temporary: boolean) {
-    const body = new FormData()
-    body.append('networktype', temporary ? '1' : '0')
-    body.append('network', ssid)
-    body.append('password', password)
-
-    const url = temporary ? '/sethome' : '/sethome?save'
-    const response = await http(url, { method: 'POST', body })
+    const response = await new WiFiAPI().connectToNetwork(ssid, password, temporary)
 
     return {
       status: response.ok ? 'ok' : 'error',
@@ -19,7 +13,7 @@ export const useWiFi = singleton(() => {
   }
 
   async function startAccessPoint() {
-    const response = await http(`/access`, { method: 'POST' })
+    const response = await new WiFiAPI().startAccessPoint()
 
     return {
       status: response.ok ? 'ok' : 'error',
@@ -28,7 +22,7 @@ export const useWiFi = singleton(() => {
   }
 
   async function forgetNetworkAndStartAccessPoint() {
-    const response = await http(`/forget`, { method: 'POST' })
+    const response = await new WiFiAPI().forgetNetworkAndStartAccessPoint()
 
     return {
       status: response.ok ? 'ok' : 'error',

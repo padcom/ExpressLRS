@@ -2,8 +2,8 @@
 import { ref, computed } from 'vue'
 
 import { singleton } from '@/lib/singleton'
-import { http } from '@/lib/http-client'
 import type { TargetConfiguration } from '@/types'
+import { TargetAPI } from '@/api'
 
 export const useTarget = singleton(() => {
   const data = ref<TargetConfiguration>()
@@ -22,7 +22,7 @@ export const useTarget = singleton(() => {
   const multiUID = computed(() => data.value?.['multi-uid'])
 
   async function load() {
-    const response = await http(`/target`)
+    const response = await new TargetAPI().load()
     if (response.ok) {
       data.value = await response.json()
       loaded.value = true
@@ -32,7 +32,7 @@ export const useTarget = singleton(() => {
   }
 
   async function reboot() {
-    const response = await http(`/reboot`, { method: 'POST' })
+    const response = await new TargetAPI().reboot()
 
     return response.ok
   }

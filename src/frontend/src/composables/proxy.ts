@@ -2,7 +2,7 @@ import { ref } from 'vue'
 
 import type { Proxy } from '@/types'
 import { singleton } from '@/lib/singleton'
-import { http } from '@/lib/http-client'
+import { ProxyAPI } from '@/api'
 
 // eslint-disable-next-line max-lines-per-function
 export const useProxySettings = singleton(() => {
@@ -11,7 +11,7 @@ export const useProxySettings = singleton(() => {
 
   // eslint-disable-next-line complexity
   async function load() {
-    const response = await http(`/proxy.json`)
+    const response = await new ProxyAPI().load()
     if (response.ok) {
       proxy.value = await response.json()
 
@@ -38,11 +38,7 @@ export const useProxySettings = singleton(() => {
       }
     }
 
-    const response = await http(`/proxy.json`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ customised: true, ...proxy.value }),
-    })
+    const response = await new ProxyAPI().save(proxy.value)
 
     return {
       status: response.ok ? 'ok' : 'error',
@@ -51,7 +47,7 @@ export const useProxySettings = singleton(() => {
   }
 
   async function reset() {
-    const response = await http(`/reset?proxy`, { method: 'POST' })
+    const response = await new ProxyAPI().reset()
 
     return {
       status: response.ok ? 'ok' : 'error',

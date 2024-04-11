@@ -26,10 +26,10 @@ import Actions from '@/components/Actions.vue'
 import UploadButton from '@/components/UploadButton.vue'
 
 import { useTarget } from '@/composables/target'
-import { http } from '@/lib/http-client'
 import { uploadFile } from '@/lib/file-upload'
 import { ticker } from '@/lib/ticker'
 import { useAlert } from '@/composables/alert'
+import { FirmwareAPI } from '@/api'
 
 const { target } = useTarget()
 const progressBar = ref<HTMLProgressElement>()
@@ -62,9 +62,7 @@ async function upload(files: FileList) {
         case 'mismatch':
           // eslint-disable-next-line max-depth
           if (await question('Targets Mismatch', result.msg || 'What do we do now?', 'Flash anyway', 'Cancel') !== 'cancel') {
-            const body = new FormData()
-            body.append('action', 'confirm')
-            await http(`/forceupdate`, { method: 'POST', body })
+            await new FirmwareAPI().forceUpdate()
           }
           break
         case 'error':

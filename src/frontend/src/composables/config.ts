@@ -2,8 +2,8 @@ import { ref } from 'vue'
 
 import type { Config } from '@/types'
 import { singleton } from '@/lib/singleton'
-import { http } from '@/lib/http-client'
 import { useOptions } from './options'
+import { ConfigAPI } from '@/api'
 
 // eslint-disable-next-line max-lines-per-function
 export const useConfig = singleton(() => {
@@ -12,7 +12,8 @@ export const useConfig = singleton(() => {
   const originalUIDType = ref<string>('Flashed')
 
   async function load() {
-    const response = await http(`/config`)
+    const response = await new ConfigAPI().load()
+
     if (response.ok) {
       config.value = await response.json()
       originalUID.value = config.value?.config.uid || []
@@ -25,7 +26,8 @@ export const useConfig = singleton(() => {
   }
 
   async function download() {
-    const response = await http(`/config?export`)
+    const response = await new ConfigAPI().download()
+
     if (response.ok) {
       return {
         status: 'ok',
