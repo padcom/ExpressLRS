@@ -50,7 +50,7 @@
       </Select>
     </td>
     <td class="failsafe-position">
-      <NumericInput v-if="failsafeMode === 0" v-model="failsafePosition" />
+      <NumericInput v-if="failsafeMode === 0" v-model="failsafePosition" size="6" />
     </td>
   </tr>
 </template>

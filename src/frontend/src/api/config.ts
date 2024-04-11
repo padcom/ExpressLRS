@@ -43,6 +43,9 @@ export interface RuntimeOptions {
   'has-highpower': boolean
   'uidtype': string
   'pwm'?: PWMOutput[]
+  'serial-protocol': number
+  'modelid'?: number | 255
+  'force-tlm'?: number
 }
 
 export interface Config {
