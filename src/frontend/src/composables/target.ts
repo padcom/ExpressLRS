@@ -14,10 +14,11 @@ export const useTarget = singleton(() => {
   const productName = computed(() => data.value?.product_name)
   const luaName = computed(() => data.value?.lua_name)
   const regDomain = computed(() => data.value?.reg_domain)
-  const isTx = computed(() => data.value?.['radio-type'] === 'TX')
-  const isRx = computed(() => data.value?.['radio-type'] === 'RX')
-  const isSX127x = computed(() => data.value?.['is-sx127x'])
-  const isLR1121 = computed(() => data.value?.['is-lr1121'])
+  const isTx = computed(() => data.value?.['module-type'] === 'TX')
+  const isRx = computed(() => data.value?.['module-type'] === 'RX')
+  const isSX128x = computed(() => data.value?.['radio-type'] === 'SX128X')
+  const isSX127x = computed(() => data.value?.['radio-type'] === 'SX127X')
+  const isLR1121 = computed(() => data.value?.['radio-type'] === 'LR1121')
   const hasSubGhz = computed(() => data.value?.['has-sub-ghz'])
   const multiUID = computed(() => data.value?.['multi-uid'])
 
@@ -49,6 +50,7 @@ export const useTarget = singleton(() => {
     regDomain,
     isTx,
     isRx,
+    isSX128x,
     isSX127x,
     isLR1121,
     hasSubGhz,
