@@ -1,6 +1,6 @@
 <template>
   <Tabs>
-    <Tab v-if="isRx" title="Model">
+    <Tab v-if="isRX" title="Model">
       <Model />
     </Tab>
     <Tab title="Options">
@@ -13,7 +13,7 @@
     <Tab title="WiFi" @selected="autoPopulateWifiNetworks && loadWiFiNetworks()">
       <WiFi />
     </Tab>
-    <Tab v-if="isTx && false" title="Buttons">
+    <Tab v-if="isTX && false" title="Buttons">
       <Buttons />
     </Tab>
     <Tab title="Update">
@@ -39,7 +39,7 @@ import { useTarget } from '@/composables/target'
 import { useNetworks } from '@/composables/networks'
 
 const { load } = useConfig()
-const { isRx, isTx, multiUID } = useTarget()
+const { isRX, isTX, multiUID } = useTarget()
 const { load: loadWiFiNetworks } = useNetworks()
 const autoPopulateWifiNetworks = ref(false)
 

@@ -10,7 +10,7 @@ import { uniqueId } from '@/composables/id'
 
 defineProps({
   value: { type: String, default: '' },
-  label: { type: String, default: 'Label' },
+  label: { type: String, default: '' },
 })
 
 const modelValue = defineModel<string>()

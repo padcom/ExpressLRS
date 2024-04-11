@@ -20,7 +20,7 @@ import { ref, type PropType } from 'vue'
 import Field from './Field.vue'
 
 defineProps({
-  label: { type: String, default: 'Label' },
+  label: { type: String, default: '' },
   options: { type: Array as PropType<string[]>, default: () => [] },
 })
 

@@ -2,6 +2,10 @@
   <Panel>
     <SectionHeader>Buttons</SectionHeader>
 
+    <p class="paragraph">
+      Specify which actions to perform when clicking or long pressing module buttons.
+    </p>
+
     <Content />
 
     <Actions>

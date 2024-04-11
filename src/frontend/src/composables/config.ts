@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 import { singleton } from '@/lib/singleton'
 import { useOptions } from './options'
@@ -9,6 +9,8 @@ export const useConfig = singleton(() => {
   const config = ref<Config>()
   const originalUID = ref<number[]>([])
   const originalUIDType = ref<string>('Flashed')
+
+  const pwm = computed(() => config.value?.config.pwm || [])
 
   async function load() {
     const response = await new ConfigAPI().load()
@@ -42,5 +44,5 @@ export const useConfig = singleton(() => {
     }
   }
 
-  return { config, load, download, originalUID, originalUIDType }
+  return { config, pwm, load, download, originalUID, originalUIDType }
 })

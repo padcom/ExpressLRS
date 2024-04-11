@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable max-nested-callbacks */
 /* eslint-env node */
 /* eslint-disable max-lines-per-function */
 import { fileURLToPath } from 'url'
@@ -6,6 +8,7 @@ import svg from 'vite-svg-loader'
 import vue from '@vitejs/plugin-vue'
 import eslint from 'vite-plugin-eslint'
 import autoprefixer from 'autoprefixer'
+import api from './api-server'
 
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd(), 'ELRS_') }
@@ -20,6 +23,7 @@ export default defineConfig(({ mode }) => {
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
     },
     plugins: [
+      mode === 'development' ? api() : null,
       vue({
         template: {
           compilerOptions: {
@@ -60,7 +64,7 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         '^/.+\\.json$': process.env.ELRS_TARGET_BASE_URL,
-        '^/config$': process.env.ELRS_TARGET_BASE_URL,
+        // '^/config$': process.env.ELRS_TARGET_BASE_URL,
         '^/reset$': process.env.ELRS_TARGET_BASE_URL,
         '^/reboot$': process.env.ELRS_TARGET_BASE_URL,
         '^/firmware.bin$': process.env.ELRS_TARGET_BASE_URL,

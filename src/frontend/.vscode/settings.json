@@ -32,7 +32,9 @@
     "mosi",
     "networktype",
     "pdet",
+    "ppppppppppccccimmmmnff",
     "ratain",
+    "rcvr",
     "reflashed",
     "rxen",
     "Semtech",
@@ -42,6 +44,7 @@
     "tacho",
     "txen",
     "uidtype",
+    "vbind",
     "vref",
     "wifi",
     "XTAL"

@@ -182,7 +182,7 @@
       />
     </Section>
 
-    <Section v-if="isTx" name="Analog Joystick">
+    <Section v-if="isTX" name="Analog Joystick">
       <AnalogInput v-model="hardware.joystick"
         label="ADC pin"
         description="Analog Input (3.3V max) use to read joystick direction using a resistor network"
@@ -193,7 +193,7 @@
       />
     </Section>
 
-    <Section v-if="isTx" name="Digital Joystick">
+    <Section v-if="isTX" name="Digital Joystick">
       <DigitalInput v-model="hardware.five_way1"
         label="Pin 1"
         description="These 3 pins create a binary value for the joystick direction"
@@ -221,7 +221,7 @@
         label="RGB indexes for Status"
         description="Indexes into the 'string' of RGB LEDs (if empty then only LED at 0 is used)"
       />
-      <ArrayInput v-if="isRx" v-model="hardware.ledidx_rgb_vtx"
+      <ArrayInput v-if="isRX" v-model="hardware.ledidx_rgb_vtx"
         label="RGB indexes for VTX Status"
         description="Indexes into the 'string' of RGB LEDs (if empty then no VTX status)"
       />
@@ -280,7 +280,7 @@
       />
     </Section>
 
-    <Section v-if="isTx" name="OLED/TFT (Crotch TV)">
+    <Section v-if="isTX" name="OLED/TFT (Crotch TV)">
       <ScreenTypeSelect v-model="hardware.screen_type"
         label="Screen type"
         description="Type of OLED connected"
@@ -393,14 +393,14 @@
       />
     </Section>
 
-    <Section v-if="isRx" name="PWM">
+    <Section v-if="isRX" name="PWM">
       <PwmArrayInput v-model="hardware.pwm_outputs"
         label="PWM output pins"
         description="Comma-separated list of pins used for PWM output"
       />
     </Section>
 
-    <Section v-if="isRx" name="VBat">
+    <Section v-if="isRX" name="VBat">
       <AnalogInput v-model="hardware.vbat"
         label="VBat pin"
         description="Analog input pin for reading VBAT voltage (1V max on 8285, 3.3V max on ESP32)"
@@ -421,7 +421,7 @@
       />
     </Section>
 
-    <Section v-if="isRx" name="SPI VTX">
+    <Section v-if="isRX" name="SPI VTX">
       <PwmOutput v-model="hardware.vtx_amp_pwm"
         label="RF amp PWM pin"
         description="
@@ -471,7 +471,7 @@
       />
     </Section>
 
-    <Section v-if="isRx" name="I2C">
+    <Section v-if="isRX" name="I2C">
       <DigitalOutput v-model="hardware.i2c_scl"
         label="SCL pin"
         description="I2C clock pin used to communicate with I2C devices"
@@ -516,7 +516,7 @@ import { useAlert } from '@/composables/alert'
 
 const { reboot } = useTarget()
 const { hardware, load, save: saveHardware, reset: resetHardware } = useHardware()
-const { isTx, isRx } = useTarget()
+const { isTX, isRX } = useTarget()
 const { question, info, error } = useAlert()
 
 onMounted(load)

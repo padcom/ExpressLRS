@@ -1,6 +1,6 @@
 <template>
   <div class="field">
-    <label :for="id">{{ label }}</label>
+    <label v-if="label" :for="id">{{ label }}</label>
     <slot name="aux" />
     <slot :id="id" />
   </div>
@@ -10,7 +10,7 @@
 import { uniqueId } from '@/composables/id'
 
 defineProps({
-  label: { type: String, default: 'Label' },
+  label: { type: String, default: '' },
 })
 
 const id = uniqueId()

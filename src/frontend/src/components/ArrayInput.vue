@@ -12,7 +12,7 @@ import { computed } from 'vue'
 import Field from './Field.vue'
 
 defineProps({
-  label: { type: String, default: 'Label' },
+  label: { type: String, default: '' },
 })
 
 const value = defineModel<string[] | number[]>({ default: () => [] })

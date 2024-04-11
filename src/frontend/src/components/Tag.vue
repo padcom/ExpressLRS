@@ -17,5 +17,6 @@ defineProps({
   padding: 0px 8px;
   font-weight: 600;
   width: max-content;
+  text-wrap: nowrap;
 }
 </style>
