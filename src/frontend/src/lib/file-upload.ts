@@ -1,7 +1,5 @@
 import { getBaseURL } from './http-client'
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {}
+import { noop } from './noop'
 
 export type ProgressCallback = (
   this: XMLHttpRequestUpload,
