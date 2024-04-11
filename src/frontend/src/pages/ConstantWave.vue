@@ -1,10 +1,10 @@
 <template>
   <Panel>
     <SectionHeader>Constant Wave</SectionHeader>
-    <p>
+    <p class="paragraph">
       This page puts the SX1280 into a mode where it transmits a continuous wave with a center frequency of 2.440 GHz.
     </p>
-    <p>
+    <p class="paragraph">
       You can then measure the actual continuous wave center frequency using a spectrum analyzer and enter the measured
       value below and this will be used to calculate the accuracy of the 52MHz crystal used in the device and how far
       it differs from the ideal frequency.
@@ -98,10 +98,6 @@ onMounted(async () => {
 </script>
 
 <style lang="postcss" scoped>
-p + p {
-  margin-top: 8px;
-}
-
 .results {
   border-collapse: collapse;
 
