@@ -1,8 +1,7 @@
 import { ref } from 'vue'
 
-import type { Proxy } from '@/types'
 import { singleton } from '@/lib/singleton'
-import { ProxyAPI } from '@/api'
+import { ProxyAPI, type Proxy } from '@/api'
 
 // eslint-disable-next-line max-lines-per-function
 export const useProxySettings = singleton(() => {

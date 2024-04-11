@@ -43,6 +43,7 @@
     "txen",
     "uidtype",
     "vref",
-    "wifi"
+    "wifi",
+    "XTAL"
   ],
 }

@@ -1,6 +1,13 @@
 import { http } from '@/lib/http-client'
 import { API } from './api'
 
+export interface Proxy {
+  customised?: boolean
+  'aux-uid-switch': number
+  'aux-tx-enable': number
+  'proxy-uid': number[]
+}
+
 export class ProxyAPI extends API {
   load() {
     return http(`/proxy.json`)

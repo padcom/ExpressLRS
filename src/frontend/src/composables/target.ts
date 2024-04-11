@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 
 import { singleton } from '@/lib/singleton'
-import type { TargetConfiguration } from '@/types'
+import { type TargetConfiguration } from '@/api'
 import { TargetAPI } from '@/api'
 
 export const useTarget = singleton(() => {

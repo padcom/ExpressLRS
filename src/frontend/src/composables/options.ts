@@ -1,7 +1,7 @@
 /* eslint-disable max-lines-per-function */
 import { ref } from 'vue'
 
-import type { BuildOptions } from '@/types'
+import { type BuildOptions } from '@/api'
 import { singleton } from '@/lib/singleton'
 import { useConfig } from './config'
 import { OptionsAPI } from '@/api'

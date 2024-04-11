@@ -1,9 +1,8 @@
 import { ref } from 'vue'
 
-import type { Config } from '@/types'
 import { singleton } from '@/lib/singleton'
 import { useOptions } from './options'
-import { ConfigAPI } from '@/api'
+import { ConfigAPI, type Config } from '@/api'
 
 // eslint-disable-next-line max-lines-per-function
 export const useConfig = singleton(() => {

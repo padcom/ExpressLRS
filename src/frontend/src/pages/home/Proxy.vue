@@ -84,7 +84,7 @@ import { useTarget } from '@/composables/target'
 import { uid } from '@/lib/uid'
 
 const { info, question, error } = useAlert()
-const { proxy, load, save: saveProxySettings, reset: resetProxySettings, originalUID } = useProxySettings()
+const { proxy, load: loadProxySettings, save: saveProxySettings, reset: resetProxySettings, originalUID } = useProxySettings()
 const { reboot } = useTarget()
 const bindingPhrase = ref('')
 
@@ -98,7 +98,7 @@ watch(bindingPhrase, newValue => {
   }
 })
 
-onMounted(load)
+onMounted(loadProxySettings)
 
 async function save() {
   const result = await saveProxySettings()

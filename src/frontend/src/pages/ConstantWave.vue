@@ -72,7 +72,8 @@ import IconOK from './constant-wave/ok.svg'
 import IconWarning from './constant-wave/warning.svg'
 import IconError from './constant-wave/error.svg'
 
-import { useConstantWave, type RadioNumber } from '@/composables/constant-wave'
+import { useConstantWave } from '@/composables/constant-wave'
+import type { RadioNumber } from '@/api'
 
 const CW_FREQ = 2440000000
 const XTAL_NOMINAL = 52000000
