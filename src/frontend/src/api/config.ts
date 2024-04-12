@@ -122,6 +122,10 @@ export function isOutputI2CCapable(output: PWMOutput) {
   return (output.features & 12) !== 0
 }
 
+export function isOutputFullyI2CCapable(output: PWMOutput) {
+  return (output.features & 12) === 12
+}
+
 export function isOutputSCLCapable(output: PWMOutput) {
   return (output.features & 4) !== 0
 }

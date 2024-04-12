@@ -4,10 +4,11 @@
       {{ index + 1 }}
     </td>
     <td class="features">
-      <Tag v-if="output.features & 1" bg="#a8dcfa" fg="#696969">TX</Tag>
-      <Tag v-if="output.features & 2" bg="#d2faa8" fg="#696969">RX</Tag>
-      <Tag v-if="output.features & 4" bg="#fab4a8" fg="#696969">SCL</Tag>
-      <Tag v-if="output.features & 8" bg="#fab4a8" fg="#696969">SDA</Tag>
+      <Tag v-if="isOutputSerialTXCapable(output)" bg="#a8dcfa" fg="#696969">TX</Tag>
+      <Tag v-if="isOutputSerialRXCapable(output)" bg="#d2faa8" fg="#696969">RX</Tag>
+      <Tag v-if="isOutputFullyI2CCapable(output)" bg="#fab4a8" fg="#696969">I²C</Tag>
+      <Tag v-else-if="isOutputSCLCapable(output)" bg="#fab4a8" fg="#696969">SCL</Tag>
+      <Tag v-else-if="isOutputSDACapable(output)" bg="#fab4a8" fg="#696969">SDA</Tag>
     </td>
     <td class="mode">
       <Select v-model="mode">
@@ -76,6 +77,7 @@ import {
   type PWMOutput,
   isOutputSerialTXCapable,
   isOutputSerialRXCapable,
+  isOutputFullyI2CCapable,
   isOutputSCLCapable,
   isOutputSDACapable,
   isOutputDShotCapable,
