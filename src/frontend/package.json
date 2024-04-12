@@ -10,8 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:watch": "vite build -w",
-    "preview": "vite build && vite preview",
-    "dev:server": "nodemon --ext 'ts,json' --exec 'ts-node -P tsconfig.server.json server.ts'"
+    "preview": "vite build && vite preview"
   },
   "devDependencies": {
     "@formkit/vue": "^1.6.1",
@@ -29,7 +28,7 @@
     "ts-node": "^10.9.2",
     "typescript": ">= 3.3.0 < 5.2.0",
     "uuid": "^9.0.1",
-    "vite": "^5.0.12",
+    "vite": "^5.2.8",
     "vite-plugin-eslint": "^1.8.1",
     "vite-svg-loader": "^5.1.0",
     "vue": "^3.4.15"
