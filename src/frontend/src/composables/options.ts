@@ -32,7 +32,7 @@ export const useOptions = singleton(() => {
       }
     }
 
-    const response = await new OptionsAPI().save(config.value, config.value.config.uid)
+    const response = await new OptionsAPI().save(config.value.options, config.value.config.uid)
 
     return {
       status: response.ok ? 'ok' : 'error',

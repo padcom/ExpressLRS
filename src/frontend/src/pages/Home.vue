@@ -5,7 +5,6 @@
     </Tab>
     <Tab title="Options">
       <Options />
-      <ImportExportOptions />
     </Tab>
     <Tab v-if="multiUID" title="Proxy">
       <Proxy />
@@ -30,7 +29,6 @@ import Tab from '@/components/Tab.vue'
 import Model from './home/Model.vue'
 import Options from './home/Options.vue'
 import Proxy from './home/Proxy.vue'
-import ImportExportOptions from './home/ImportExportOptions.vue'
 import WiFi from './home/WiFi.vue'
 import Buttons from './home/Buttons.vue'
 import FirmwareUpdate from './home/FirmwareUpdate.vue'
