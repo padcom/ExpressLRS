@@ -66,7 +66,26 @@
       <p class="paragraph">
         Set the protocol used to communicate with the flight controller or other external devices.
       </p>
-      <SerialProtocolSelect v-model="config.config['serial-protocol']" />
+      <Content>
+        <SerialProtocolSelect v-model="config.config['serial-protocol']" />
+      </Content>
+
+      <div v-if="[2, 3, 5].includes(config.config['serial-protocol'])">
+        <SectionHeader>SBUS Failsafe</SectionHeader>
+        <p class="paragraph">
+          Set the failsafe behavior when using the SBUS protocol:
+          <ul class="list">
+            <li>"No Pulses" stops sending SBUS data when a connection to the transmitter is lost</li>
+            <li>"Last Position" continues to send the last received channel data along with the FAILSAFE bit set</li>
+          </ul>
+        </p>
+        <Content>
+          <Select v-model="config.config['sbus-failsafe']" label="SBUS Failsafe">
+            <option :value="0">No Pulses</option>
+            <option :value="1">Last Position</option>
+          </Select>
+        </Content>
+      </div>
     </div>
 
     <div>
@@ -75,8 +94,10 @@
         Specify the 'Receiver' number in OpenTX/EdgeTX model setup page and turn on the 'Model Match'
         in the ExpressLRS Lua script for that model. 'Model Match' is between 0 and 63 inclusive.
       </p>
-      <Checkbox v-model="modelMatch" label="Enable Model Match" />
-      <NumericInput v-if="modelMatch" v-model="config.config.modelid" label="Model ID" />
+      <Content>
+        <Checkbox v-model="modelMatchEnabled" label="Enable Model Match" />
+        <NumericInput v-if="modelMatchEnabled" v-model="config.config.modelid" label="Model ID" />
+      </Content>
     </div>
 
     <div>
@@ -87,11 +108,13 @@
         <br>
         Enable this option to ignore the "Telem Ratio" setting on the TX and never send telemetry from this receiver.
       </p>
-      <Checkbox v-model="forceTelemetry" label="Force telemetry OFF on this receiver" />
+      <Content>
+        <Checkbox v-model="forceTelemetry" label="Force telemetry OFF on this receiver" />
+      </Content>
     </div>
 
     <Actions>
-      <Button type="primary">
+      <Button type="primary" @click="save">
         Save
       </Button>
     </Actions>
@@ -109,14 +132,18 @@ import PWMOutputTable from './components/PWMOutputTable.vue'
 import SerialProtocolSelect from './components/SerialProtocolSelect.vue'
 import NumericInput from '@/components/NumericInput.vue'
 import Checkbox from '@/components/Checkbox.vue'
+import Select from '@/components/Select.vue'
+import Content from '@/components/Content.vue'
 
 import { useConfig } from '@/composables/config'
+import { useAlert } from '@/composables/alert'
+import { readBits } from '@/lib/bits'
 
-const { config, pwm } = useConfig()
+const { config, pwm, save: saveConfig } = useConfig()
 
-const hasSerialOutputs = computed(() => (pwm.value || []).some(output => ((output.config >> 15) & 15) === 9))
+const hasSerialOutputs = computed(() => (pwm.value || []).some(output => readBits(output.config, 15, 4) === 9))
 
-const modelMatch = computed({
+const modelMatchEnabled = computed({
   get() {
     return Boolean(config.value?.config.modelid !== 255)
   },
@@ -138,4 +165,16 @@ const forceTelemetry = computed({
     }
   },
 })
+
+const { info, error } = useAlert()
+
+async function save() {
+  const result = await saveConfig()
+
+  if (result.status === 'ok') {
+    info('Set Configuration', result.msg)
+  } else {
+    error('Set Configuration', result.msg)
+  }
+}
 </script>

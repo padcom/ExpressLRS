@@ -22,10 +22,10 @@
     </Content>
 
     <Actions>
-      <Button v-if="action === 'new-network'" :disabled="!ssid || !password" @click="connect(ssid, password, false)">
+      <Button v-if="action === 'new-network'" :disabled="!ssid || password.length < 8" @click="connect(ssid, password, false)">
         Confirm
       </Button>
-      <Button v-if="action === 'one-time'" :disabled="!ssid || !password" @click="connect(ssid, password, true)">
+      <Button v-if="action === 'one-time'" :disabled="!ssid || password.length < 8" @click="connect(ssid, password, true)">
         Confirm
       </Button>
       <Button v-if="action === 'start-ap'" @click="accessPoint()">

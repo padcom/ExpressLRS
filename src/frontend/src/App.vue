@@ -1,6 +1,4 @@
 <template>
-  <TargetSelector v-if="canShowTargetSelector" />
-
   <template v-if="data">
     <Header />
     <Navigation />
@@ -14,9 +12,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
-import TargetSelector from '@/components/TargetSelector.vue'
 import Header from '@/components/Header.vue'
 import Navigation from '@/components/Navigation.vue'
 import Panel from '@/components/Panel.vue'
@@ -25,8 +22,6 @@ import Alert from '@/components/Alert.vue'
 
 import { useTarget } from './composables/target'
 import { provideAlert } from './composables/alert'
-
-const canShowTargetSelector = computed(() => import.meta.env.MODE === 'development')
 
 const alert = ref<InstanceType<typeof Alert>>()
 provideAlert(alert)

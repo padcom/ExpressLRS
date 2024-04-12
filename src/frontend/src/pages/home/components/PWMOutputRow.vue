@@ -19,15 +19,15 @@
         <option :value="5">400Hz</option>
         <option :value="6">10KHzDuty</option>
         <option :value="7">On/Off</option>
-        <option v-if="output.features & 16" :value="8">DShot</option>
-        <option v-if="output.features & 1" :value="9">Serial TX</option>
-        <option v-if="output.features & 2" :value="9">Serial RX</option>
-        <option v-if="output.features & 4" :value="10">I²C SCL</option>
-        <option v-if="output.features & 8" :value="11">I²C SDA</option>
+        <option v-if="isDShotCapable(output)" :value="8">DShot</option>
+        <option v-if="isSerialTXCapable(output)" :value="9">Serial TX</option>
+        <option v-if="isSerialRXCapable(output)" :value="9">Serial RX</option>
+        <option v-if="isSCLCapable(output)" :value="10">I²C SCL</option>
+        <option v-if="isSDACapable(output)" :value="11">I²C SDA</option>
       </Select>
     </td>
     <td class="channel">
-      <Select v-model="input">
+      <Select v-model="input" :disabled="getMode(output) === 9">
         <option v-for="channel in 4" :key="channel" :value="channel - 1">
           ch{{ channel }}
         </option>
@@ -37,20 +37,20 @@
       </Select>
     </td>
     <td class="invert">
-      <input v-model="inverted" type="checkbox">
+      <input v-model="inverted" type="checkbox" :disabled="getMode(output) === 9">
     </td>
     <td class="is750us">
-      <input v-model="is750us" type="checkbox">
+      <input v-model="is750us" type="checkbox" :disabled="getMode(output) === 9">
     </td>
     <td class="failsafe-mode">
-      <Select v-model="failsafeMode">
+      <Select v-model="failsafeMode" :disabled="getMode(output) === 9">
         <option :value="0">Set Position</option>
         <option :value="1">No Pulses</option>
         <option :value="2">Last Position</option>
       </Select>
     </td>
     <td class="failsafe-position">
-      <NumericInput v-if="failsafeMode === 0" v-model="failsafePosition" size="6" />
+      <NumericInput v-if="failsafeMode === 0" v-model="failsafePosition" size="6" :disabled="getMode(output) === 9" />
     </td>
   </tr>
 </template>
@@ -62,66 +62,110 @@ import Tag from '@/components/Tag.vue'
 import Select from '@/components/Select.vue'
 import NumericInput from '@/components/NumericInput.vue'
 
-import { type PWMOutput } from '@/api'
+import {
+  type PWMOutput,
+  isSerialTXCapable,
+  isSerialRXCapable,
+  isSCLCapable,
+  isSDACapable,
+  isDShotCapable,
+  getMode,
+  setMode,
+  getChannel,
+  setChannel,
+  getIsInverted,
+  setIsInverted,
+  getIs750us,
+  setIs750us,
+  getFailsafeMode,
+  setFailsafeMode,
+  getFailsafePosition,
+  setFailsafePosition,
+} from '@/api'
 
 const props = defineProps({
   index: { type: Number, required: true },
   output: { type: Object as PropType<PWMOutput>, required: true },
 })
 
+const emit = defineEmits<{(e: 'mode-changed', mode: number): void}>()
+
 const mode = computed({
   get() {
-    return (props.output.config >> 15) & 15
+    return getMode(props.output)
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   set(value: number) {
-    // START HERE: zero out the bits 15-19 and set the value
-    // props.output.config = props.output.config & 0 value << 15
+    setMode(props.output, value)
+    emit('mode-changed', value)
   },
 })
 
 const input = computed({
   get() {
-    return (props.output.config >> 10) & 15
+    return getChannel(props.output)
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   set(value: number) {
+    setChannel(props.output, value)
   },
 })
 
 const inverted = computed({
   get() {
-    return Boolean((props.output.config >> 14) & 1)
+    return getIsInverted(props.output)
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   set(value: boolean) {
+    setIsInverted(props.output, value)
   },
 })
 
 const is750us = computed({
   get() {
-    return Boolean((props.output.config >> 19) & 1)
+    return getIs750us(props.output)
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   set(value: boolean) {
+    setIs750us(props.output, value)
   },
 })
 
 const failsafeMode = computed({
   get() {
-    return (props.output.config >> 20) & 3
+    return getFailsafeMode(props.output)
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   set(value: number) {
+    setFailsafeMode(props.output, value)
   },
 })
 
 const failsafePosition = computed({
   get() {
-    return (props.output.config & 1023) + 988
+    return getFailsafePosition(props.output)
   },
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
   set(value: number) {
+    setFailsafePosition(props.output, value)
   },
 })
 </script>
+
+<style lang="postcss" scoped>
+td {
+  padding: 8px;
+}
+
+.index,
+.features,
+.invert,
+.is750us {
+  text-align: center;
+  width: 20px;
+}
+
+.mode,
+.channel {
+  width: 25%;
+}
+
+.failsafe-mode,
+.failsafe-position {
+  width: 20%;
+}
+</style>

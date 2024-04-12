@@ -44,5 +44,20 @@ export const useConfig = singleton(() => {
     }
   }
 
-  return { config, pwm, load, download, originalUID, originalUIDType }
+  async function save() {
+    if (!config.value) {
+      return {
+        status: 'error',
+        msg: 'No config loaded',
+      }
+    }
+    const response = await new ConfigAPI().save(config.value.config)
+
+    return {
+      status: response.ok ? 'ok' : 'error',
+      msg: response.statusText,
+    }
+  }
+
+  return { config, pwm, load, save, download, originalUID, originalUIDType }
 })

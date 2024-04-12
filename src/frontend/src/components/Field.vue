@@ -36,10 +36,11 @@ const id = uniqueId()
     outline: none;
     margin-bottom: 2px;
     background-color: white;
+    width: 100%;
   }
 
   & ::v-deep(input) {
-    padding-bottom: 2px;
+    padding-bottom: 1px;
   }
 
   & ::v-deep(select) {
