@@ -17,7 +17,6 @@ export const useNetworks = singleton(() => {
     try {
       await new NetworksAPI().load()
     } finally {
-      // eslint-disable-next-line require-atomic-updates
       loading.value = false
     }
   }
