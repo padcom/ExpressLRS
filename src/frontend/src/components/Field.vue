@@ -45,6 +45,7 @@ const id = uniqueId()
 
   & ::v-deep(select) {
     padding-bottom: 0px;
+    padding-top: 1px;
   }
 
   /* autoprefixer: ignore next */
