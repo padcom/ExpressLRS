@@ -124,7 +124,7 @@ export function isSDACapable(output: PWMOutput) {
 }
 
 export function isDShotCapable(output: PWMOutput) {
-  return (output.features & 8) !== 0
+  return (output.features & 16) !== 0
 }
 
 export class ConfigAPI extends API {
