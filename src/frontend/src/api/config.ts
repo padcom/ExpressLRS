@@ -55,79 +55,79 @@ export interface Config {
   'config': RuntimeOptions
 }
 
-export function getMode(output: PWMOutput) {
+export function getOutputMode(output: PWMOutput) {
   return readBits(output.config, 15, 4)
 }
 
-export function setMode(output: PWMOutput, newMode: number) {
+export function setOutputMode(output: PWMOutput, newMode: number) {
   output.config = updateBits(output.config, newMode, 15, 4)
 }
 
-export function getChannel(output: PWMOutput) {
+export function getOutputChannel(output: PWMOutput) {
   return readBits(output.config, 10, 4)
 }
 
-export function setChannel(output: PWMOutput, newChannel: number) {
+export function setOutputChannel(output: PWMOutput, newChannel: number) {
   output.config = updateBits(output.config, newChannel, 10, 4)
 }
 
-export function getIsInverted(output: PWMOutput) {
+export function getOutputIsInverted(output: PWMOutput) {
   return Boolean(readBits(output.config, 14, 1))
 }
 
-export function setIsInverted(output: PWMOutput, newIsInverted: boolean) {
+export function setOutputIsInverted(output: PWMOutput, newIsInverted: boolean) {
   output.config = updateBits(output.config, newIsInverted ? 1 : 0, 14, 1)
 }
 
-export function getIs750us(output: PWMOutput) {
+export function getOutputIs750us(output: PWMOutput) {
   return Boolean(readBits(output.config, 19, 1))
 }
 
-export function setIs750us(output: PWMOutput, newIs750us: boolean) {
+export function setOutputIs750us(output: PWMOutput, newIs750us: boolean) {
   output.config = updateBits(output.config, newIs750us ? 1 : 0, 19, 1)
 }
 
-export function getFailsafeMode(output: PWMOutput) {
+export function getOutputFailsafeMode(output: PWMOutput) {
   return readBits(output.config, 20, 2)
 }
 
-export function setFailsafeMode(output: PWMOutput, newFailsafeMode: number) {
+export function setOutputFailsafeMode(output: PWMOutput, newFailsafeMode: number) {
   output.config = updateBits(output.config, newFailsafeMode, 20, 2)
 }
 
-export function getFailsafePosition(output: PWMOutput) {
+export function getOutputFailsafePosition(output: PWMOutput) {
   return (output.config & 1023) + 988
 }
 
-export function setFailsafePosition(output: PWMOutput, newFailsafePosition: number) {
+export function setOutputFailsafePosition(output: PWMOutput, newFailsafePosition: number) {
   output.config = (output.config & 0xffffc00) | (newFailsafePosition - 988)
 }
 
-export function isSerialCapable(output: PWMOutput) {
+export function isOutputSerialCapable(output: PWMOutput) {
   return (output.features & 3) !== 0
 }
 
-export function isSerialTXCapable(output: PWMOutput) {
+export function isOutputSerialTXCapable(output: PWMOutput) {
   return (output.features & 1) !== 0
 }
 
-export function isSerialRXCapable(output: PWMOutput) {
+export function isOutputSerialRXCapable(output: PWMOutput) {
   return (output.features & 2) !== 0
 }
 
-export function isI2CCapable(output: PWMOutput) {
+export function isOutputI2CCapable(output: PWMOutput) {
   return (output.features & 12) !== 0
 }
 
-export function isSCLCapable(output: PWMOutput) {
+export function isOutputSCLCapable(output: PWMOutput) {
   return (output.features & 4) !== 0
 }
 
-export function isSDACapable(output: PWMOutput) {
+export function isOutputSDACapable(output: PWMOutput) {
   return (output.features & 8) !== 0
 }
 
-export function isDShotCapable(output: PWMOutput) {
+export function isOutputDShotCapable(output: PWMOutput) {
   return (output.features & 16) !== 0
 }
 

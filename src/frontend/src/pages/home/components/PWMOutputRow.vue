@@ -19,11 +19,11 @@
         <option :value="5">400Hz</option>
         <option :value="6">10KHzDuty</option>
         <option :value="7">On/Off</option>
-        <option v-if="isDShotCapable(output)" :value="8">DShot</option>
-        <option v-if="isSerialTXCapable(output)" :value="9">Serial TX</option>
-        <option v-if="isSerialRXCapable(output)" :value="9">Serial RX</option>
-        <option v-if="isSCLCapable(output)" :value="10">I²C SCL</option>
-        <option v-if="isSDACapable(output)" :value="11">I²C SDA</option>
+        <option v-if="isOutputDShotCapable(output)" :value="8">DShot</option>
+        <option v-if="isOutputSerialTXCapable(output)" :value="9">Serial TX</option>
+        <option v-if="isOutputSerialRXCapable(output)" :value="9">Serial RX</option>
+        <option v-if="isOutputSCLCapable(output)" :value="10">I²C SCL</option>
+        <option v-if="isOutputSDACapable(output)" :value="11">I²C SDA</option>
       </Select>
     </td>
     <td class="channel">
@@ -74,23 +74,23 @@ import NumericInput from '@/components/NumericInput.vue'
 
 import {
   type PWMOutput,
-  isSerialTXCapable,
-  isSerialRXCapable,
-  isSCLCapable,
-  isSDACapable,
-  isDShotCapable,
-  getMode,
-  setMode,
-  getChannel,
-  setChannel,
-  getIsInverted,
-  setIsInverted,
-  getIs750us,
-  setIs750us,
-  getFailsafeMode,
-  setFailsafeMode,
-  getFailsafePosition,
-  setFailsafePosition,
+  isOutputSerialTXCapable,
+  isOutputSerialRXCapable,
+  isOutputSCLCapable,
+  isOutputSDACapable,
+  isOutputDShotCapable,
+  getOutputMode,
+  setOutputMode,
+  getOutputChannel,
+  setOutputChannel,
+  getOutputIsInverted,
+  setOutputIsInverted,
+  getOutputIs750us,
+  setOutputIs750us,
+  getOutputFailsafeMode,
+  setOutputFailsafeMode,
+  getOutputFailsafePosition,
+  setOutputFailsafePosition,
 } from '@/api'
 
 const props = defineProps({
@@ -101,61 +101,61 @@ const props = defineProps({
 const emit = defineEmits<{(e: 'mode-changed', mode: number): void}>()
 
 function modeDisablesEditing() {
-  return [9, 10, 11].includes(getMode(props.output))
+  return [9, 10, 11].includes(getOutputMode(props.output))
 }
 
 const mode = computed({
   get() {
-    return getMode(props.output)
+    return getOutputMode(props.output)
   },
   set(value: number) {
-    setMode(props.output, value)
+    setOutputMode(props.output, value)
     emit('mode-changed', value)
   },
 })
 
 const input = computed({
   get() {
-    return getChannel(props.output)
+    return getOutputChannel(props.output)
   },
   set(value: number) {
-    setChannel(props.output, value)
+    setOutputChannel(props.output, value)
   },
 })
 
 const inverted = computed({
   get() {
-    return getIsInverted(props.output)
+    return getOutputIsInverted(props.output)
   },
   set(value: boolean) {
-    setIsInverted(props.output, value)
+    setOutputIsInverted(props.output, value)
   },
 })
 
 const is750us = computed({
   get() {
-    return getIs750us(props.output)
+    return getOutputIs750us(props.output)
   },
   set(value: boolean) {
-    setIs750us(props.output, value)
+    setOutputIs750us(props.output, value)
   },
 })
 
 const failsafeMode = computed({
   get() {
-    return getFailsafeMode(props.output)
+    return getOutputFailsafeMode(props.output)
   },
   set(value: number) {
-    setFailsafeMode(props.output, value)
+    setOutputFailsafeMode(props.output, value)
   },
 })
 
 const failsafePosition = computed({
   get() {
-    return getFailsafePosition(props.output)
+    return getOutputFailsafePosition(props.output)
   },
   set(value: number) {
-    setFailsafePosition(props.output, value)
+    setOutputFailsafePosition(props.output, value)
   },
 })
 </script>
