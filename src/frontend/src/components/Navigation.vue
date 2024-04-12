@@ -1,35 +1,19 @@
 <template>
   <ul class="navigation">
     <li>
-      <RouterLink :to="target('/')">
-        Settings
-      </RouterLink>
+      <Link href="/">Settings</Link>
     </li>
     <li>
-      <RouterLink :to="target('/hardware.html')">
-        Hardware
-      </RouterLink>
+      <Link href="/hardware.html">Hardware</Link>
     </li>
     <li>
-      <RouterLink :to="target('/cw.html')">
-        Constant Wave
-      </RouterLink>
+      <Link href="/cw.html">Constant Wave</Link>
     </li>
   </ul>
 </template>
 
 <script lang="ts" setup>
-import { RouterLink, type RouteLocationRaw } from 'vue-router'
-import { getBaseURL } from '@/lib/http-client'
-
-function target(path: string) {
-  const result: RouteLocationRaw = { path }
-  const baseUrl = getBaseURL()
-
-  if (baseUrl) result.query = { 'base-url': baseUrl }
-
-  return result
-}
+import Link from './navigation/Link.vue'
 </script>
 
 <style lang="postcss" scoped>
@@ -39,18 +23,5 @@ function target(path: string) {
   gap: 24px;
   margin-top: 16px;
   list-style: none;
-  color: var(--clr-btn-primary);
-
-  a {
-    color: black;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 400;
-    text-transform: uppercase;
-  }
-
-  a.router-link-active {
-    -webkit-text-stroke-width: 0.25px;
-  }
 }
 </style>
