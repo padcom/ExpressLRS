@@ -115,6 +115,10 @@ export function isSerialRXCapable(output: PWMOutput) {
   return (output.features & 2) !== 0
 }
 
+export function isI2CCapable(output: PWMOutput) {
+  return (output.features & 12) !== 0
+}
+
 export function isSCLCapable(output: PWMOutput) {
   return (output.features & 4) !== 0
 }

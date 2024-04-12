@@ -27,7 +27,9 @@
       </Select>
     </td>
     <td class="channel">
-      <Select v-model="input" :disabled="getMode(output) === 9">
+      <Select v-model="input"
+        :disabled="modeDisablesEditing()"
+      >
         <option v-for="channel in 4" :key="channel" :value="channel - 1">
           ch{{ channel }}
         </option>
@@ -37,20 +39,28 @@
       </Select>
     </td>
     <td class="invert">
-      <input v-model="inverted" type="checkbox" :disabled="getMode(output) === 9">
+      <input v-model="inverted" type="checkbox"
+        :disabled="modeDisablesEditing()"
+      >
     </td>
     <td class="is750us">
-      <input v-model="is750us" type="checkbox" :disabled="getMode(output) === 9">
+      <input v-model="is750us" type="checkbox"
+        :disabled="modeDisablesEditing()"
+      >
     </td>
     <td class="failsafe-mode">
-      <Select v-model="failsafeMode" :disabled="getMode(output) === 9">
+      <Select v-model="failsafeMode"
+        :disabled="modeDisablesEditing()"
+      >
         <option :value="0">Set Position</option>
         <option :value="1">No Pulses</option>
         <option :value="2">Last Position</option>
       </Select>
     </td>
     <td class="failsafe-position">
-      <NumericInput v-if="failsafeMode === 0" v-model="failsafePosition" size="6" :disabled="getMode(output) === 9" />
+      <NumericInput v-if="failsafeMode === 0" v-model="failsafePosition" size="6"
+        :disabled="modeDisablesEditing()"
+      />
     </td>
   </tr>
 </template>
@@ -89,6 +99,10 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{(e: 'mode-changed', mode: number): void}>()
+
+function modeDisablesEditing() {
+  return [9, 10, 11].includes(getMode(props.output))
+}
 
 const mode = computed({
   get() {
