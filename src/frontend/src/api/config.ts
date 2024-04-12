@@ -100,6 +100,9 @@ export function getOutputFailsafePosition(output: PWMOutput) {
 }
 
 export function setOutputFailsafePosition(output: PWMOutput, newFailsafePosition: number) {
+  if (newFailsafePosition > 2011) newFailsafePosition = 2011
+  if (newFailsafePosition < 988) newFailsafePosition = 988
+
   output.config = (output.config & 0xffffc00) | (newFailsafePosition - 988)
 }
 
