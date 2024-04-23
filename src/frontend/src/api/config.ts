@@ -153,6 +153,25 @@ export function isOutputDShotCapable(output: PWMOutput) {
 }
 
 export class ConfigAPI extends API {
+  async saveButtons(buttonActions: ButtonActions) {
+    const response = await http('/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        'button-actions': buttonActions,
+      }),
+    })
+
+    if (response.ok) {
+      return {
+        ok: true,
+        statusText: await response.text(),
+      }
+    } else {
+      return response
+    }
+  }
+
   load() {
     return http(`/config`)
   }

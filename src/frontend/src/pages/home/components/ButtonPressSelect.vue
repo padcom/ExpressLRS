@@ -1,7 +1,7 @@
 <template>
   <Select v-model.number="editableValue" label="Press">
-    <option value="1">Short</option>
-    <option value="2">Long</option>
+    <option value="1">Short press (click)</option>
+    <option value="2">Long press (hold)</option>
   </Select>
 </template>
 

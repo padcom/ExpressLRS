@@ -63,5 +63,26 @@ export const useConfig = singleton(() => {
     }
   }
 
-  return { config, loaded, pwm, load, save, download, originalUID, originalUIDType, buttons, hasButtons }
+  async function saveButtons() {
+    if (!config.value) {
+      return {
+        status: 'error',
+        msg: 'No config loaded',
+      }
+    } else if (!config.value.config['button-actions']) {
+      return {
+        status: 'error',
+        msg: 'No buttons configuration loaded',
+      }
+    }
+
+    const response = await new ConfigAPI().saveButtons(config.value?.config['button-actions'])
+
+    return {
+      status: response.ok ? 'ok' : 'error',
+      msg: response.statusText,
+    }
+  }
+
+  return { config, loaded, pwm, load, save, download, saveButtons, originalUID, originalUIDType, buttons, hasButtons }
 })
