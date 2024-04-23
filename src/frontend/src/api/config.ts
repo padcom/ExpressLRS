@@ -34,6 +34,19 @@ export interface PWMOutput {
   features: number
 }
 
+export interface ButtonAction {
+  'is-long-press': boolean
+  count: number
+  action: number
+}
+
+export interface Button {
+  color: number
+  action: ButtonAction[]
+}
+
+export type ButtonActions = Button[]
+
 export interface RuntimeOptions {
   'uid': UID
   'ssid': string
@@ -48,6 +61,7 @@ export interface RuntimeOptions {
   'modelid'?: number | 255
   'force-tlm'?: number
   'sbus-failsafe': number
+  'button-actions': ButtonActions
 }
 
 export interface Config {

@@ -4,5 +4,8 @@
     "*.css": "postcss",
     "chrono": "cpp",
     "cstdint": "cpp"
-  }
+  },
+  "cSpell.words": [
+    "Wifi"
+  ]
 }

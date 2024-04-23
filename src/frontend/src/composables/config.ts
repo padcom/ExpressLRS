@@ -7,10 +7,13 @@ import { ConfigAPI, type Config } from '@/api'
 // eslint-disable-next-line max-lines-per-function
 export const useConfig = singleton(() => {
   const config = ref<Config>()
+  const loaded = ref(false)
   const originalUID = ref<number[]>([])
   const originalUIDType = ref<string>('Flashed')
 
   const pwm = computed(() => config.value?.config.pwm || [])
+  const buttons = computed(() => config.value?.config['button-actions'] || [])
+  const hasButtons = computed(() => buttons.value.length > 0)
 
   async function load() {
     const response = await new ConfigAPI().load()
@@ -21,6 +24,7 @@ export const useConfig = singleton(() => {
       originalUIDType.value = config.value?.config.uidtype || 'Flashed'
       const { options } = useOptions()
       options.value = config.value?.options
+      loaded.value = true
     } else {
       config.value = undefined
     }
@@ -59,5 +63,5 @@ export const useConfig = singleton(() => {
     }
   }
 
-  return { config, pwm, load, save, download, originalUID, originalUIDType }
+  return { config, loaded, pwm, load, save, download, originalUID, originalUIDType, buttons, hasButtons }
 })
